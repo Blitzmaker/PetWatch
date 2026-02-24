@@ -23,7 +23,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       final response = await api.post('/auth/register', data: {'email': _email.text.trim(), 'password': _password.text});
       await store.saveTokens(response.data['accessToken'] as String, response.data['refreshToken'] as String);
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/dogs');
+        Navigator.pushReplacementNamed(context, '/dashboard');
       }
     } on DioException catch (e) {
       setState(() => _error = e.response?.data?.toString() ?? 'Registrierung fehlgeschlagen');

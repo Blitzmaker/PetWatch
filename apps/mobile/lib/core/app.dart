@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../features/auth/login_screen.dart';
 import '../features/auth/register_screen.dart';
+import '../features/dashboard/dashboard_screen.dart';
 import '../features/dogs/dog_list_screen.dart';
 import '../features/dogs/create_dog_screen.dart';
 import '../features/weights/weight_list_screen.dart';
@@ -21,6 +22,7 @@ class DogWatchApp extends StatelessWidget {
       routes: {
         '/login': (_) => const LoginScreen(),
         '/register': (_) => const RegisterScreen(),
+        '/dashboard': (_) => const DashboardScreen(),
         '/dogs': (_) => const DogListScreen(),
         '/dogs/create': (_) => const CreateDogScreen(),
         '/weights': (_) => const WeightListScreen(),
