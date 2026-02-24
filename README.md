@@ -53,6 +53,22 @@ flutter pub get
 flutter run
 ```
 
+## Aktueller MVP-Stand
+
+Backend:
+- Auth (Register/Login/Refresh/Logout)
+- Dogs CRUD (list/create/get/update)
+- Weights (list/create/delete)
+- Foods (lookup by barcode/create)
+- Meals (list/create/get/delete) inkl. DB-Transaktion für Meal + Entries
+
+Mobile:
+- Login/Register mit API-Anbindung und Token-Speicherung
+- Dog-Liste + Dog-Erstellung
+- Gewichtsliste + Gewicht erfassen (für selektierten Hund)
+- Barcode Lookup + Food Create (bei 404)
+- Meals-Liste + Meal-Erstellung (Basisflow)
+
 ## Backend Hinweise
 
 - JWT Access + Refresh (Rotation)
