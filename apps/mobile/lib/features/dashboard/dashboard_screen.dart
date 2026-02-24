@@ -132,7 +132,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       return sum + mealKcal;
     });
 
-    final remainingKcal = (_dailyKcalTarget - consumedKcal).clamp(0, _dailyKcalTarget);
+    final remainingKcal = (_dailyKcalTarget - consumedKcal).clamp(0.0, _dailyKcalTarget).toDouble();
     final progress = (consumedKcal / _dailyKcalTarget).clamp(0, 1).toDouble();
 
     final lastWeighingText = _weights.isEmpty
