@@ -16,6 +16,11 @@ export class CreateDogDto {
   @IsString()
   name!: string;
 
+
+  @IsOptional()
+  @IsString()
+  breed?: string;
+
   @IsOptional()
   @IsDateString()
   birthdate?: string; // ISO date string

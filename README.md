@@ -64,8 +64,8 @@ Backend:
 
 Mobile:
 - Login/Register mit API-Anbindung und Token-Speicherung
-- Dog-Liste + Dog-Erstellung
-- Gewichtsliste + Gewicht erfassen (für selektierten Hund)
+- Dog-Liste + Dog-Erstellung (Rasse, Geburtsdatum, Geschlecht, Aktivitätslevel, Zielgewicht)
+- Gewichtsliste + Gewicht erfassen (inkl. Erstgewicht beim Hund-Anlegen)
 - Barcode Lookup + Food Create (bei 404)
 - Meals-Liste + Meal-Erstellung (Basisflow)
 

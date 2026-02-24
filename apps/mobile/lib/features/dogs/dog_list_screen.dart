@@ -58,7 +58,7 @@ class _DogListScreenState extends ConsumerState<DogListScreen> {
                   final dog = _dogs[index] as Map<String, dynamic>;
                   return ListTile(
                     title: Text(dog['name'] as String? ?? 'Ohne Name'),
-                    subtitle: Text('ID: ${dog['id']}'),
+                    subtitle: Text('Rasse: ${dog['breed'] ?? '-'} • ID: ${dog['id']}'),
                     onTap: () {
                       ref.read(selectedDogIdProvider.notifier).state = dog['id'] as String;
                       showModalBottomSheet(
