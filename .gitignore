@@ -1,0 +1,19 @@
+# Node
+node_modules/
+services/api/node_modules/
+
+# Flutter / Dart
+.dart_tool/
+.build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+
+# Env files
+.env
+services/api/.env
+
+services/api/dist/
