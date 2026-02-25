@@ -23,6 +23,12 @@ class DogWatchApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2CB89D)),
         scaffoldBackgroundColor: const Color(0xFFBFE3D4),
         useMaterial3: true,
+        fontFamily: 'RobotoCondensed',
+        textTheme: ThemeData.light().textTheme.apply(
+          fontFamily: 'RobotoCondensed',
+          bodyColor: const Color(0xFF163847),
+          displayColor: const Color(0xFF163847),
+        ),
       ),
       initialRoute: '/login',
       routes: {
