@@ -95,7 +95,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Willkommen bei DogWatch', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700, color: Color(0xFF1D7F6F))),
+                const Text('Willkommen bei DogWatch', style: TextStyle(fontFamily: 'SourGummy', fontSize: 30, fontWeight: FontWeight.w700, color: Color(0xFF1D7F6F))),
                 const SizedBox(height: 16),
                 const Text('Lege zuerst einen Hund an, um dein Dashboard zu sehen.'),
                 const SizedBox(height: 24),
@@ -206,7 +206,7 @@ class _HeaderCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Hallo $dogName!', style: const TextStyle(fontSize: 48 / 2, fontWeight: FontWeight.w700, color: Colors.white)),
+                Text('Hallo $dogName!', style: const TextStyle(fontFamily: 'SourGummy', fontSize: 48 / 2, fontWeight: FontWeight.w700, color: Colors.white)),
                 const CircleAvatar(radius: 36 / 2, backgroundColor: Colors.white, child: Text('🐶', style: TextStyle(fontSize: 22))),
               ],
             ),
@@ -219,8 +219,8 @@ class _HeaderCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      const Text('Aktuelles Gewicht', style: TextStyle(color: Color(0xFF1F4E59), fontWeight: FontWeight.w700)),
-                      Text(latestWeight == null ? '--' : '${latestWeight!.toStringAsFixed(1)} kg', style: const TextStyle(fontSize: 56 / 2, fontWeight: FontWeight.w800, color: Color(0xFF183D4C))),
+                      const Text('Aktuelles Gewicht', style: TextStyle(fontFamily: 'RobotoCondensed', color: Color(0xFF1F4E59), fontWeight: FontWeight.w700)),
+                      Text(latestWeight == null ? '--' : '${latestWeight!.toStringAsFixed(1)} kg', style: const TextStyle(fontFamily: 'SourGummy', fontSize: 56 / 2, fontWeight: FontWeight.w700, color: Color(0xFF183D4C))),
                     ]),
                   ),
                   Container(
@@ -229,9 +229,9 @@ class _HeaderCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Zielgewicht', style: TextStyle(color: Color(0xFF2DA871), fontWeight: FontWeight.w700)),
-                        Text(targetWeight == null ? '--' : '${targetWeight!.toStringAsFixed(1)} kg', style: const TextStyle(fontSize: 46 / 2, color: Color(0xFF22A06B), fontWeight: FontWeight.w800)),
-                        Text(diff == null ? '--' : '${diff >= 0 ? '+' : ''}${diff.toStringAsFixed(1)} kg', style: const TextStyle(color: Color(0xFF59A888), fontWeight: FontWeight.w600)),
+                        const Text('Zielgewicht', style: TextStyle(fontFamily: 'RobotoCondensed', color: Color(0xFF2DA871), fontWeight: FontWeight.w700)),
+                        Text(targetWeight == null ? '--' : '${targetWeight!.toStringAsFixed(1)} kg', style: const TextStyle(fontFamily: 'SourGummy', fontSize: 46 / 2, color: Color(0xFF22A06B), fontWeight: FontWeight.w700)),
+                        Text(diff == null ? '--' : '${diff >= 0 ? '+' : ''}${diff.toStringAsFixed(1)} kg', style: const TextStyle(fontFamily: 'SourGummy', color: Color(0xFF59A888), fontWeight: FontWeight.w600)),
                       ],
                     ),
                   )
@@ -278,12 +278,12 @@ class _CalorieRing extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(remainingKcal.round().toString(), style: const TextStyle(fontSize: 84 / 2, color: Colors.white, fontWeight: FontWeight.w800)),
-                const Text('Kalorien übrig', style: TextStyle(fontSize: 34 / 2, color: Colors.white, fontWeight: FontWeight.w700)),
+                Text(remainingKcal.round().toString(), style: const TextStyle(fontFamily: 'SourGummy', fontSize: 84 / 2, color: Colors.white, fontWeight: FontWeight.w700)),
+                const Text('Kalorien übrig', style: TextStyle(fontFamily: 'RobotoCondensed', fontSize: 34 / 2, color: Colors.white, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),
                 Container(width: 120, height: 1, color: Colors.white54),
                 const SizedBox(height: 8),
-                Text('Von ${targetKcal.round()} kcal', style: const TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w600)),
+                Text('Von ${targetKcal.round()} kcal', style: const TextStyle(fontFamily: 'RobotoCondensed', color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w600)),
               ],
             ),
           )
@@ -309,11 +309,11 @@ class _StatCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(color: Color(0xFF1CB392), fontWeight: FontWeight.w700, fontSize: 15)),
+          Text(title, style: const TextStyle(fontFamily: 'SourGummy', color: Color(0xFF1CB392), fontWeight: FontWeight.w600, fontSize: 15)),
           const Spacer(),
           Center(child: Icon(icon, color: const Color(0xFF2CB89D), size: 38)),
           const Spacer(),
-          Center(child: Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Color(0xFF163847)))),
+          Center(child: Text(value, style: const TextStyle(fontFamily: 'RobotoCondensed', fontSize: 16, fontWeight: FontWeight.w500, color: Color(0xFF163847)))),
         ],
       ),
     );

@@ -71,7 +71,7 @@ class AppShell extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Schnell hinzufügen', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+              const Text('Schnell hinzufügen', style: TextStyle(fontFamily: 'SourGummy', fontSize: 18, fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
               ListTile(
                 leading: const Icon(Icons.pets),
@@ -126,7 +126,7 @@ class _NavItem extends StatelessWidget {
           children: [
             Icon(icon, color: color),
             const SizedBox(height: 4),
-            Text(label, style: TextStyle(color: color, fontSize: 12, fontWeight: selected ? FontWeight.w700 : FontWeight.w500)),
+            Text(label, style: TextStyle(fontFamily: selected ? 'SourGummy' : 'RobotoCondensed', color: color, fontSize: 12, fontWeight: selected ? FontWeight.w700 : FontWeight.w500)),
           ],
         ),
       ),

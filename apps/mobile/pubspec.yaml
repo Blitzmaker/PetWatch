@@ -21,3 +21,18 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: SourGummy
+      fonts:
+        - asset: fonts/SourGummy-Regular.ttf
+          weight: 400
+        - asset: fonts/SourGummy-SemiBold.ttf
+          weight: 600
+        - asset: fonts/SourGummy-Bold.ttf
+          weight: 700
+    - family: RobotoCondensed
+      fonts:
+        - asset: fonts/Roboto_SemiCondensed-Regular.ttf
+          weight: 400
+        - asset: fonts/Roboto_Condensed-SemiBold.ttf
+          weight: 600
