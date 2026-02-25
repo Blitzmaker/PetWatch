@@ -203,6 +203,22 @@ Danach API neu starten:
 docker compose --env-file infra/.env -f infra/docker-compose.yml restart api
 ```
 
+### Fehler: `@prisma/client did not initialize yet`
+
+Ursache: Das API-Container-Image wurde mit einer älteren Dockerfile-Version gebaut, bei der der
+generierte Prisma-Client nicht im Runtime-Layer gelandet ist. Dann startet Nest, aber Prisma kann
+beim Import nicht initialisieren.
+
+Beheben:
+
+```bash
+docker compose --env-file infra/.env -f infra/docker-compose.yml build --no-cache api
+docker compose --env-file infra/.env -f infra/docker-compose.yml up -d
+docker compose --env-file infra/.env -f infra/docker-compose.yml logs -f api
+```
+
+Wenn der Fehler weg ist, funktionieren Registrierung und Login in der Flutter-App wieder.
+
 ### Fehler: Prisma/OpenSSL im API-Container
 
 Wenn im Log `Prisma failed to detect the libssl/openssl version` erscheint, nutze die aktuelle
