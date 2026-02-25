@@ -3,7 +3,7 @@ import 'token_store.dart';
 
 class ApiClient {
   ApiClient(this._tokenStore)
-      : dio = Dio(BaseOptions(baseUrl: 'http://10.0.2.2:3000')) {
+      : dio = Dio(BaseOptions(baseUrl: _baseUrl)) {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
@@ -39,6 +39,12 @@ class ApiClient {
       ),
     );
   }
+
+
+  static const _baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://10.0.2.2:3000',
+  );
 
   final Dio dio;
   final TokenStore _tokenStore;
