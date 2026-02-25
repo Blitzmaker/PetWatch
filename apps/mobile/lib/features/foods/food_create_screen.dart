@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/app_shell.dart';
 import '../../core/providers.dart';
 
 class FoodCreateScreen extends ConsumerStatefulWidget {
@@ -40,8 +41,9 @@ class _FoodCreateScreenState extends ConsumerState<FoodCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Create Food')),
+    return AppShell(
+      currentIndex: 1,
+      title: 'Futter anlegen',
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

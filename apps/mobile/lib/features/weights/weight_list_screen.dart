@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/app_shell.dart';
 import '../../core/providers.dart';
 
 class WeightListScreen extends ConsumerStatefulWidget {
@@ -39,8 +40,9 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Weights')),
+    return AppShell(
+      currentIndex: 2,
+      title: 'Gewichte',
       body: _error != null
           ? Center(child: Text(_error!, style: const TextStyle(color: Colors.red)))
           : ListView.builder(
@@ -53,13 +55,6 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.pushNamed(context, '/weights/create');
-          _load();
-        },
-        child: const Icon(Icons.add),
-      ),
     );
   }
 }

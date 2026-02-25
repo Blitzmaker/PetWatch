@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/app_shell.dart';
 import '../../core/providers.dart';
 
 class AddWeightScreen extends ConsumerStatefulWidget {
@@ -25,7 +26,7 @@ class _AddWeightScreenState extends ConsumerState<AddWeightScreen> {
         'date': DateTime.now().toIso8601String(),
         'weightKg': double.tryParse(_weight.text) ?? 0,
       });
-      if (mounted) Navigator.pop(context);
+      if (mounted) Navigator.pushReplacementNamed(context, '/weights');
     } on DioException catch (e) {
       setState(() => _error = e.response?.data?.toString() ?? 'Speichern fehlgeschlagen');
     }
@@ -33,8 +34,9 @@ class _AddWeightScreenState extends ConsumerState<AddWeightScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Add Weight')),
+    return AppShell(
+      currentIndex: 2,
+      title: 'Gewicht erfassen',
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

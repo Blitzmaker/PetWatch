@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/app_shell.dart';
 import '../../core/providers.dart';
 
 class BarcodeScanScreen extends ConsumerStatefulWidget {
@@ -29,8 +30,9 @@ class _BarcodeScanScreenState extends ConsumerState<BarcodeScanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Barcode Lookup')),
+    return AppShell(
+      currentIndex: 1,
+      title: 'Barcode Lookup',
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

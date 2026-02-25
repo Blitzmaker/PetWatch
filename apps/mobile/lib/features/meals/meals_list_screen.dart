@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/app_shell.dart';
 import '../../core/providers.dart';
 
 class MealsListScreen extends ConsumerStatefulWidget {
@@ -39,8 +40,9 @@ class _MealsListScreenState extends ConsumerState<MealsListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Meals')),
+    return AppShell(
+      currentIndex: 1,
+      title: 'Mahlzeiten',
       body: _error != null
           ? Center(child: Text(_error!, style: const TextStyle(color: Colors.red)))
           : ListView.builder(
@@ -51,13 +53,6 @@ class _MealsListScreenState extends ConsumerState<MealsListScreen> {
                 return ListTile(title: Text(meal['eatenAt'] as String? ?? ''), subtitle: Text('Einträge: $entries'));
               },
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.pushNamed(context, '/meals/create');
-          _load();
-        },
-        child: const Icon(Icons.add),
-      ),
     );
   }
 }

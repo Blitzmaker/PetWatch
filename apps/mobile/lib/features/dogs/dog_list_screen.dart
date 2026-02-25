@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/app_shell.dart';
 import '../../core/providers.dart';
 
 class DogListScreen extends ConsumerStatefulWidget {
@@ -43,9 +44,10 @@ class _DogListScreenState extends ConsumerState<DogListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppShell(
+      currentIndex: 3,
       appBar: AppBar(
-        title: const Text('Dogs'),
+        title: const Text('Hunde'),
         actions: [IconButton(onPressed: _logout, icon: const Icon(Icons.logout))],
       ),
       body: RefreshIndicator(
@@ -61,27 +63,11 @@ class _DogListScreenState extends ConsumerState<DogListScreen> {
                     subtitle: Text('Rasse: ${dog['breed'] ?? '-'} • ID: ${dog['id']}'),
                     onTap: () {
                       ref.read(selectedDogIdProvider.notifier).state = dog['id'] as String;
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (_) => Wrap(
-                          children: [
-                            ListTile(title: const Text('Gewichte'), onTap: () => Navigator.pushNamed(context, '/weights')),
-                            ListTile(title: const Text('Mahlzeiten'), onTap: () => Navigator.pushNamed(context, '/meals')),
-                            ListTile(title: const Text('Barcode Scan'), onTap: () => Navigator.pushNamed(context, '/scan')),
-                          ],
-                        ),
-                      );
+                      Navigator.pushReplacementNamed(context, '/dashboard');
                     },
                   );
                 },
               ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.pushNamed(context, '/dogs/create');
-          _loadDogs();
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }

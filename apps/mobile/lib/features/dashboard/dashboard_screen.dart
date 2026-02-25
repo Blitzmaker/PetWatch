@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/app_shell.dart';
 import '../../core/providers.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -77,21 +78,23 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     }
 
     if (_error != null) {
-      return Scaffold(
+      return AppShell(
+        currentIndex: 0,
+        backgroundColor: const Color(0xFFBFE3D4),
         body: Center(child: Text(_error!, style: const TextStyle(color: Colors.red))),
       );
     }
 
     if (_dog == null) {
-      return Scaffold(
-        backgroundColor: const Color(0xFFCFECE2),
+      return AppShell(
+        currentIndex: 0,
+        backgroundColor: const Color(0xFFBFE3D4),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 12),
                 const Text('Willkommen bei DogWatch', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700, color: Color(0xFF1D7F6F))),
                 const SizedBox(height: 16),
                 const Text('Lege zuerst einen Hund an, um dein Dashboard zu sehen.'),
@@ -107,7 +110,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
           ),
         ),
-        bottomNavigationBar: _BottomNav(currentIndex: 0),
       );
     }
 
@@ -139,7 +141,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ? 'Noch nie'
         : _daysAgoText(DateTime.tryParse((_weights.first as Map<String, dynamic>)['date'] as String? ?? ''));
 
-    return Scaffold(
+    return AppShell(
+      currentIndex: 0,
       backgroundColor: const Color(0xFFBFE3D4),
       body: SafeArea(
         child: RefreshIndicator(
@@ -148,55 +151,34 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             padding: EdgeInsets.zero,
             children: [
               _HeaderCard(dogName: _dog?['name'] as String? ?? 'Hund', latestWeight: latestWeight?.toDouble(), targetWeight: targetWeight?.toDouble()),
-              const SizedBox(height: 18),
-              Center(
-                child: _CalorieRing(remainingKcal: remainingKcal, targetKcal: _dailyKcalTarget, progress: progress),
-              ),
-              const SizedBox(height: 22),
+              const SizedBox(height: 20),
+              Center(child: _CalorieRing(remainingKcal: remainingKcal, targetKcal: _dailyKcalTarget, progress: progress)),
+              const SizedBox(height: 20),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   children: [
-                    Expanded(child: _StatCard(title: 'Mahlzeiten Heute', value: '$mealsToday / 3', icon: Icons.restaurant)),
+                    Expanded(child: _StatCard(title: 'Mahlzeiten
+heute', value: '$mealsToday / 3', icon: Icons.restaurant)),
                     const SizedBox(width: 10),
-                    Expanded(child: _StatCard(title: 'Aktuelles Gewicht', value: latestWeight == null ? '--' : '${latestWeight.toStringAsFixed(1)} kg', icon: Icons.scale)),
+                    Expanded(child: _StatCard(title: 'Aktivität
+heute', value: 'Niedrig', icon: Icons.pets)),
                     const SizedBox(width: 10),
-                    Expanded(child: _StatCard(title: 'Letztes Wiegen', value: lastWeighingText, icon: Icons.pets)),
+                    Expanded(child: _StatCard(title: 'Letztes
+Wiegen', value: lastWeighingText, icon: Icons.monitor_weight)),
                   ],
                 ),
               ),
-              const SizedBox(height: 22),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  children: [
-                    _ActionButton(
-                      text: 'Mahlzeit hinzufügen',
-                      icon: Icons.add,
-                      filled: true,
-                      onTap: () => Navigator.pushNamed(context, '/meals/create'),
-                    ),
-                    const SizedBox(height: 12),
-                    _ActionButton(
-                      text: 'Gewicht erfassen',
-                      icon: Icons.pets,
-                      filled: false,
-                      onTap: () => Navigator.pushNamed(context, '/weights/create'),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 26),
+              const SizedBox(height: 80),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: const _BottomNav(currentIndex: 0),
     );
   }
 
   String _daysAgoText(DateTime? date) {
-    if (date == null) return 'Unbekannt';
+    if (date == null) return '0 / 3';
     final days = DateTime.now().difference(date).inDays;
     if (days <= 0) return 'Heute';
     if (days == 1) return 'Vor 1 Tag';
@@ -213,50 +195,44 @@ class _HeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final up = latestWeight != null && targetWeight != null ? latestWeight! > targetWeight! : false;
+    final diff = (targetWeight != null && latestWeight != null) ? (targetWeight! - latestWeight!) : null;
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(colors: [Color(0xFF7DCCB1), Color(0xFF7BCAB7)], begin: Alignment.topCenter, end: Alignment.bottomCenter),
-      ),
+      decoration: const BoxDecoration(color: Color(0xFF7FCFB8)),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(18, 14, 18, 18),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Hallo $dogName!', style: const TextStyle(fontSize: 38, fontWeight: FontWeight.bold, color: Colors.white)),
-                const CircleAvatar(radius: 38, backgroundColor: Colors.white, child: Text('🐶', style: TextStyle(fontSize: 36))),
+                Text('Hallo $dogName!', style: const TextStyle(fontSize: 48 / 2, fontWeight: FontWeight.w700, color: Colors.white)),
+                const CircleAvatar(radius: 36 / 2, backgroundColor: Colors.white, child: Text('🐶', style: TextStyle(fontSize: 22))),
               ],
             ),
             const SizedBox(height: 14),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(28), boxShadow: const [BoxShadow(color: Color(0x22000000), blurRadius: 8, offset: Offset(0, 4))]),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(color: const Color(0xFFF2F6F5), borderRadius: BorderRadius.circular(24)),
+              child: Row(
                 children: [
-                  const Text('Aktuelles Gewicht', style: TextStyle(fontSize: 20, color: Color(0xFF7B8A96), fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        latestWeight == null ? '--' : '${latestWeight!.toStringAsFixed(1)} kg',
-                        style: const TextStyle(fontSize: 52, fontWeight: FontWeight.w700, color: Color(0xFF1F4E59)),
-                      ),
-                      if (latestWeight != null && targetWeight != null)
-                        Icon(up ? Icons.arrow_upward : Icons.arrow_downward, color: up ? const Color(0xFF30B886) : const Color(0xFF1D8FD0), size: 34),
-                    ],
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      const Text('Aktuelles Gewicht', style: TextStyle(color: Color(0xFF1F4E59), fontWeight: FontWeight.w700)),
+                      Text(latestWeight == null ? '--' : '${latestWeight!.toStringAsFixed(1)} kg', style: const TextStyle(fontSize: 56 / 2, fontWeight: FontWeight.w800, color: Color(0xFF183D4C))),
+                    ]),
                   ),
-                  const SizedBox(height: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                    decoration: BoxDecoration(color: const Color(0xFFD2F1E4), borderRadius: BorderRadius.circular(14)),
-                    child: Text(
-                      targetWeight == null ? 'Kein Zielgewicht' : 'Ziel: ${targetWeight!.toStringAsFixed(1)} kg',
-                      style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF2C9F72), fontSize: 22),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    decoration: BoxDecoration(color: const Color(0xFFCDEEDC), borderRadius: BorderRadius.circular(18)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Zielgewicht', style: TextStyle(color: Color(0xFF2DA871), fontWeight: FontWeight.w700)),
+                        Text(targetWeight == null ? '--' : '${targetWeight!.toStringAsFixed(1)} kg', style: const TextStyle(fontSize: 46 / 2, color: Color(0xFF22A06B), fontWeight: FontWeight.w800)),
+                        Text(diff == null ? '--' : '${diff >= 0 ? '+' : ''}${diff.toStringAsFixed(1)} kg', style: const TextStyle(color: Color(0xFF59A888), fontWeight: FontWeight.w600)),
+                      ],
                     ),
                   )
                 ],
@@ -279,46 +255,38 @@ class _CalorieRing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 360,
-      height: 360,
+      width: 300,
+      height: 300,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Container(
-            width: 330,
-            height: 330,
-            decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFE2F6EE)),
-          ),
+          Container(width: 270, height: 270, decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFFD8F0E5))),
           SizedBox(
-            width: 330,
-            height: 330,
+            width: 258,
+            height: 258,
             child: CircularProgressIndicator(
               value: progress,
-              strokeWidth: 22,
-              backgroundColor: const Color(0xFFB9E9D9),
-              valueColor: const AlwaysStoppedAnimation(Color(0xFF59CF96)),
+              strokeWidth: 10,
+              backgroundColor: Colors.white,
+              valueColor: const AlwaysStoppedAnimation(Color(0xFF4FD49B)),
             ),
           ),
           Container(
-            width: 280,
-            height: 280,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(colors: [Color(0xFF26B1B0), Color(0xFF22A7A8)], begin: Alignment.topLeft, end: Alignment.bottomRight),
-              boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 14, offset: Offset(0, 8))],
-            ),
+            width: 232,
+            height: 232,
+            decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFF2DB5B4)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(remainingKcal.round().toString(), style: const TextStyle(fontSize: 82, color: Colors.white, fontWeight: FontWeight.bold)),
-                const Text('Kalorien übrig', style: TextStyle(fontSize: 52 / 2, color: Colors.white, fontWeight: FontWeight.w600)),
+                Text(remainingKcal.round().toString(), style: const TextStyle(fontSize: 84 / 2, color: Colors.white, fontWeight: FontWeight.w800)),
+                const Text('Kalorien übrig', style: TextStyle(fontSize: 34 / 2, color: Colors.white, fontWeight: FontWeight.w700)),
                 const SizedBox(height: 8),
-                Container(height: 1, width: 170, color: Colors.white.withOpacity(0.5)),
-                const SizedBox(height: 10),
-                Text('Von ${targetKcal.round()} kcal', style: const TextStyle(fontSize: 20, color: Colors.white70, fontWeight: FontWeight.w600)),
+                Container(width: 120, height: 1, color: Colors.white54),
+                const SizedBox(height: 8),
+                Text('Von ${targetKcal.round()} kcal', style: const TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w600)),
               ],
             ),
-          ),
+          )
         ],
       ),
     );
@@ -335,104 +303,17 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 160,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), boxShadow: const [BoxShadow(color: Color(0x20000000), blurRadius: 6, offset: Offset(0, 3))]),
+      height: 158,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: const Color(0xFFF0F2F2), borderRadius: BorderRadius.circular(18), boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 5, offset: Offset(0, 3))]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.w600, color: Color(0xFF72828E), fontSize: 14)),
-          const SizedBox(height: 8),
-          Center(child: Icon(icon, size: 40, color: const Color(0xFF2DB79E))),
+          Text(title, style: const TextStyle(color: Color(0xFF1CB392), fontWeight: FontWeight.w700, fontSize: 15)),
           const Spacer(),
-          Container(height: 1, color: const Color(0xFFE3E8ED)),
-          const SizedBox(height: 6),
-          Center(
-            child: Text(value, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 22, color: Color(0xFF2D4350))),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({required this.text, required this.icon, required this.filled, required this.onTap});
-
-  final String text;
-  final IconData icon;
-  final bool filled;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final background = filled
-        ? const LinearGradient(colors: [Color(0xFF54CE95), Color(0xFF25B9B6)])
-        : const LinearGradient(colors: [Colors.white, Colors.white]);
-    final textColor = filled ? Colors.white : const Color(0xFF6E808F);
-
-    return InkWell(
-      borderRadius: BorderRadius.circular(40),
-      onTap: onTap,
-      child: Ink(
-        decoration: BoxDecoration(
-          gradient: background,
-          borderRadius: BorderRadius.circular(40),
-          boxShadow: const [BoxShadow(color: Color(0x20000000), blurRadius: 8, offset: Offset(0, 4))],
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: textColor, size: 32),
-            const SizedBox(width: 12),
-            Text(text, style: TextStyle(color: textColor, fontSize: 38 / 2, fontWeight: FontWeight.w700)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _BottomNav extends StatelessWidget {
-  const _BottomNav({required this.currentIndex});
-
-  final int currentIndex;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-        boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 10, offset: Offset(0, -2))],
-      ),
-      child: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: currentIndex,
-        selectedItemColor: const Color(0xFF2CB48F),
-        unselectedItemColor: const Color(0xFF758795),
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, '/dashboard');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/meals');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/weights');
-              break;
-            case 3:
-              Navigator.pushNamed(context, '/dogs');
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Dashboard'),
-          BottomNavigationBarItem(icon: Icon(Icons.restaurant), label: 'Mahlzeiten'),
-          BottomNavigationBarItem(icon: Icon(Icons.scale), label: 'Gewicht'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Profil'),
+          Center(child: Icon(icon, color: const Color(0xFF2CB89D), size: 38)),
+          const Spacer(),
+          Center(child: Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Color(0xFF163847)))),
         ],
       ),
     );

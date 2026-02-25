@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../features/auth/login_screen.dart';
 import '../features/auth/register_screen.dart';
+import '../features/activities/add_activity_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
 import '../features/dogs/dog_list_screen.dart';
 import '../features/dogs/create_dog_screen.dart';
@@ -18,6 +19,11 @@ class DogWatchApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'DogWatch',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2CB89D)),
+        scaffoldBackgroundColor: const Color(0xFFBFE3D4),
+        useMaterial3: true,
+      ),
       initialRoute: '/login',
       routes: {
         '/login': (_) => const LoginScreen(),
@@ -31,6 +37,7 @@ class DogWatchApp extends StatelessWidget {
         '/foods/create': (_) => const FoodCreateScreen(),
         '/meals/create': (_) => const MealCreateScreen(),
         '/meals': (_) => const MealsListScreen(),
+        '/activities/create': (_) => const AddActivityScreen(),
       },
     );
   }

@@ -19,7 +19,7 @@ cp services/api/.env.example services/api/.env
 Beispielwert:
 
 ```env
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/dogwatch"
+DATABASE_URL="postgresql://postgres:postgres@heinsi5000:5432/dogwatch"
 ```
 
 Danach `prisma`-Befehle aus `services/api` ausführen:

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/app_shell.dart';
 import '../../core/providers.dart';
 import 'breeds.dart';
 
@@ -30,9 +31,7 @@ class _CreateDogScreenState extends ConsumerState<CreateDogScreen> {
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     );
-    if (picked != null) {
-      setState(() => _birthdate = picked);
-    }
+    if (picked != null) setState(() => _birthdate = picked);
   }
 
   Future<void> _create() async {
@@ -63,7 +62,7 @@ class _CreateDogScreenState extends ConsumerState<CreateDogScreen> {
         });
       }
 
-      if (mounted) Navigator.pop(context);
+      if (mounted) Navigator.pushReplacementNamed(context, '/dashboard');
     } on DioException catch (e) {
       setState(() => _error = e.response?.data?.toString() ?? 'Erstellen fehlgeschlagen');
     } finally {
@@ -73,8 +72,9 @@ class _CreateDogScreenState extends ConsumerState<CreateDogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Create Dog')),
+    return AppShell(
+      currentIndex: 3,
+      title: 'Hund anlegen',
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -112,16 +112,8 @@ class _CreateDogScreenState extends ConsumerState<CreateDogScreen> {
               ],
               onChanged: (value) => setState(() => _activityLevel = value),
             ),
-            TextField(
-              controller: _targetWeight,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Zielgewicht (kg)'),
-            ),
-            TextField(
-              controller: _currentWeight,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Aktuelles Gewicht (kg, optional)'),
-            ),
+            TextField(controller: _targetWeight, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Zielgewicht (kg)')),
+            TextField(controller: _currentWeight, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Aktuelles Gewicht (kg, optional)')),
             if (_error != null)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
