@@ -82,6 +82,9 @@ docker compose --env-file infra/.env -f infra/docker-compose.yml up -d --build
 
 Beim Start führt die API automatisch Prisma-Migrationen aus (`prisma migrate deploy`).
 
+> Wichtig: `POSTGRES_USER` nur vor dem **allerersten** Start setzen. Wenn du ihn später änderst,
+> bleiben alte Daten im Docker-Volume und PostgreSQL kennt den neuen User nicht automatisch.
+
 ### 1.5 Funktion prüfen
 
 ```bash
@@ -160,4 +163,52 @@ Stoppen:
 
 ```bash
 docker compose --env-file infra/.env -f infra/docker-compose.yml down
+```
+
+## Troubleshooting
+
+### Fehler: `FATAL: role "blitzmaker" does not exist`
+
+Ursache: Der Postgres-Daten-Volume wurde schon früher mit einem anderen `POSTGRES_USER` initialisiert
+(z. B. `postgres`). Wenn du später in `infra/.env` auf `blitzmaker` wechselst, wird der User im
+bestehenden Volume **nicht nachträglich** angelegt.
+
+#### Option A (einfach, Daten werden gelöscht)
+
+```bash
+docker compose --env-file infra/.env -f infra/docker-compose.yml down -v
+docker compose --env-file infra/.env -f infra/docker-compose.yml up -d --build
+```
+
+Damit wird die Datenbank mit den aktuellen `.env`-Werten neu initialisiert.
+
+#### Option B (Daten behalten, User manuell anlegen)
+
+```bash
+docker compose --env-file infra/.env -f infra/docker-compose.yml exec postgres psql -U postgres -d postgres
+```
+
+Dann in `psql` (Beispiel):
+
+```sql
+CREATE ROLE blitzmaker LOGIN PASSWORD 'DEIN_PASSWORT';
+ALTER DATABASE dogwatch OWNER TO blitzmaker;
+GRANT ALL PRIVILEGES ON DATABASE dogwatch TO blitzmaker;
+\q
+```
+
+Danach API neu starten:
+
+```bash
+docker compose --env-file infra/.env -f infra/docker-compose.yml restart api
+```
+
+### Fehler: Prisma/OpenSSL im API-Container
+
+Wenn im Log `Prisma failed to detect the libssl/openssl version` erscheint, nutze die aktuelle
+Version mit neuem API-Image (dieses Repo nutzt jetzt `node:20-bookworm-slim` + OpenSSL):
+
+```bash
+docker compose --env-file infra/.env -f infra/docker-compose.yml build --no-cache api
+docker compose --env-file infra/.env -f infra/docker-compose.yml up -d
 ```
