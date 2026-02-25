@@ -158,14 +158,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   children: [
-                    Expanded(child: _StatCard(title: 'Mahlzeiten
-heute', value: '$mealsToday / 3', icon: Icons.restaurant)),
+                    Expanded(child: _StatCard(title: 'Mahlzeiten\nheute', value: '$mealsToday / 3', icon: Icons.restaurant)),
                     const SizedBox(width: 10),
-                    Expanded(child: _StatCard(title: 'Aktivität
-heute', value: 'Niedrig', icon: Icons.pets)),
+                    Expanded(child: _StatCard(title: 'Aktivität\nheute', value: 'Niedrig', icon: Icons.pets)),
                     const SizedBox(width: 10),
-                    Expanded(child: _StatCard(title: 'Letztes
-Wiegen', value: lastWeighingText, icon: Icons.monitor_weight)),
+                    Expanded(child: _StatCard(title: 'Letztes\nWiegen', value: lastWeighingText, icon: Icons.monitor_weight)),
                   ],
                 ),
               ),
