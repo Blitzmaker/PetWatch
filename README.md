@@ -228,3 +228,56 @@ Version mit neuem API-Image (dieses Repo nutzt jetzt `node:20-bookworm-slim` + O
 docker compose --env-file infra/.env -f infra/docker-compose.yml build --no-cache api
 docker compose --env-file infra/.env -f infra/docker-compose.yml up -d
 ```
+
+---
+
+
+## 5) Vollintegriertes Admin-Backend als zusätzlicher Docker-Stack
+
+Für dein gewünschtes vollständiges Admin-Backend sind jetzt integriert:
+
+- `infra/docker-compose.admin.yml` (Directus + Strapi + Flarum)
+- `docs/admin-backend-konzept.md` (Gesamtkonzept)
+- erweiterte API-/DB-Modelle für Usermanagement, Food-Review, CMS, Community
+
+### 5.1 Konfigurationsdatei erweitern
+
+Ergänze in `infra/.env` zusätzlich:
+
+```env
+DIRECTUS_KEY=change-me
+DIRECTUS_SECRET=change-me
+DIRECTUS_ADMIN_EMAIL=admin@petwatch.local
+DIRECTUS_ADMIN_PASSWORD=change-me
+
+STRAPI_DB_NAME=strapi
+STRAPI_DB_USER=strapi
+STRAPI_DB_PASSWORD=change-me
+STRAPI_JWT_SECRET=change-me
+STRAPI_ADMIN_JWT_SECRET=change-me
+STRAPI_APP_KEYS=change-me-1,change-me-2,change-me-3,change-me-4
+STRAPI_API_TOKEN_SALT=change-me
+STRAPI_TRANSFER_TOKEN_SALT=change-me
+
+FLARUM_DB_NAME=flarum
+FLARUM_DB_USER=flarum
+FLARUM_DB_PASSWORD=change-me
+FLARUM_DB_ROOT_PASSWORD=change-me
+FLARUM_SITE_URL=http://192.168.178.105:8080
+FLARUM_TITLE=PetWatch Community
+```
+
+### 5.2 Alles gemeinsam starten
+
+```bash
+docker compose --env-file infra/.env -f infra/docker-compose.yml -f infra/docker-compose.admin.yml up -d --build
+```
+
+### 5.3 Admin-/CMS-/Community-Ports
+
+- API: `3000`
+- Directus: `8055`
+- Strapi: `1337`
+- Flarum: `8080`
+
+> Empfehlung: Veröffentlichung nur hinter Reverse Proxy mit HTTPS + IP-Restriktion.

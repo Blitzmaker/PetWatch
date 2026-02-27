@@ -1,4 +1,5 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { FoodStatus } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateFoodDto } from './dto/create-food.dto';
@@ -7,15 +8,23 @@ import { CreateFoodDto } from './dto/create-food.dto';
 export class FoodsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findByBarcode(barcode: string) {
-    const food = await this.prisma.food.findUnique({ where: { barcode } });
+  async findByBarcode(barcode: string, userId: string) {
+    const food = await this.prisma.food.findFirst({
+      where: {
+        barcode,
+        OR: [{ status: FoodStatus.APPROVED_PUBLIC }, { createdByUserId: userId }],
+      },
+    });
+
     if (!food) throw new NotFoundException('Food not found');
     return food;
   }
 
   async create(userId: string, dto: CreateFoodDto) {
     try {
-      return await this.prisma.food.create({ data: { ...dto, createdByUserId: userId } });
+      return await this.prisma.food.create({
+        data: { ...dto, createdByUserId: userId, status: FoodStatus.DRAFT_LOCAL },
+      });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         throw new ConflictException('Barcode already exists');

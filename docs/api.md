@@ -22,7 +22,7 @@ Authenticated endpoints require `Authorization: Bearer <accessToken>`.
 - DELETE `/weights/:id`
 
 ## Foods
-- GET `/foods/by-barcode/:barcode`
+- GET `/foods/by-barcode/:barcode` (nur öffentlich freigegebene oder eigene lokale Foods)
 - POST `/foods`
 
 ## Meals
@@ -30,3 +30,21 @@ Authenticated endpoints require `Authorization: Bearer <accessToken>`.
 - POST `/dogs/:dogId/meals`
 - GET `/meals/:id`
 - DELETE `/meals/:id`
+
+## Admin
+- GET `/admin/users`
+- PATCH `/admin/users/:id`
+- DELETE `/admin/users/:id`
+- GET `/admin/dogs`
+- GET `/admin/foods`
+- PATCH `/admin/foods/:id/review`
+- GET `/admin/cms/categories`
+- POST `/admin/cms/categories`
+- GET `/admin/cms/posts`
+- POST `/admin/cms/posts`
+- GET `/admin/community/topics`
+- POST `/admin/community/topics`
+- GET `/admin/community/threads`
+- POST `/admin/community/threads`
+- GET `/admin/community/threads/:threadId/posts`
+- POST `/admin/community/posts`

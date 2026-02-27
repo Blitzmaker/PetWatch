@@ -1,0 +1,98 @@
+services:
+  # Backoffice für User/Hunde/Foods + eigene Collections
+  directus:
+    image: directus/directus:11
+    restart: unless-stopped
+    environment:
+      KEY: ${DIRECTUS_KEY}
+      SECRET: ${DIRECTUS_SECRET}
+      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
+      DB_CLIENT: pg
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${POSTGRES_DB:-dogwatch}
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "8055:8055"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Headless CMS für News/Beiträge
+  strapi:
+    image: strapi/strapi:latest
+    restart: unless-stopped
+    environment:
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: strapi_db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ${STRAPI_DB_NAME:-strapi}
+      DATABASE_USERNAME: ${STRAPI_DB_USER:-strapi}
+      DATABASE_PASSWORD: ${STRAPI_DB_PASSWORD:-strapi}
+      JWT_SECRET: ${STRAPI_JWT_SECRET}
+      ADMIN_JWT_SECRET: ${STRAPI_ADMIN_JWT_SECRET}
+      APP_KEYS: ${STRAPI_APP_KEYS}
+      API_TOKEN_SALT: ${STRAPI_API_TOKEN_SALT}
+      TRANSFER_TOKEN_SALT: ${STRAPI_TRANSFER_TOKEN_SALT}
+    ports:
+      - "1337:1337"
+    volumes:
+      - strapi_data:/opt/app
+    depends_on:
+      strapi_db:
+        condition: service_healthy
+
+  strapi_db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${STRAPI_DB_NAME:-strapi}
+      POSTGRES_USER: ${STRAPI_DB_USER:-strapi}
+      POSTGRES_PASSWORD: ${STRAPI_DB_PASSWORD:-strapi}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -p 5432"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - strapi_postgres_data:/var/lib/postgresql/data
+
+  # Community-Forum
+  flarum:
+    image: mondedie/flarum:latest
+    restart: unless-stopped
+    environment:
+      DB_HOST: flarum_db
+      DB_NAME: ${FLARUM_DB_NAME:-flarum}
+      DB_USER: ${FLARUM_DB_USER:-flarum}
+      DB_PASS: ${FLARUM_DB_PASSWORD:-flarum}
+      FORUM_TITLE: ${FLARUM_TITLE:-PetWatch Community}
+      SITE_URL: ${FLARUM_SITE_URL:-http://localhost:8080}
+    ports:
+      - "8080:8888"
+    depends_on:
+      flarum_db:
+        condition: service_healthy
+
+  flarum_db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${FLARUM_DB_NAME:-flarum}
+      MYSQL_USER: ${FLARUM_DB_USER:-flarum}
+      MYSQL_PASSWORD: ${FLARUM_DB_PASSWORD:-flarum}
+      MYSQL_ROOT_PASSWORD: ${FLARUM_DB_ROOT_PASSWORD}
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - flarum_mariadb_data:/var/lib/mysql
+
+volumes:
+  strapi_data:
+  strapi_postgres_data:
+  flarum_mariadb_data:
