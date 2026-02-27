@@ -265,7 +265,12 @@ FLARUM_DB_PASSWORD=change-me
 FLARUM_DB_ROOT_PASSWORD=change-me
 FLARUM_SITE_URL=http://192.168.178.105:8080
 FLARUM_TITLE=PetWatch Community
+FLARUM_ADMIN_USER=admin
+FLARUM_ADMIN_PASSWORD=change-me
+FLARUM_ADMIN_EMAIL=admin@petwatch.local
 ```
+
+> Hinweis: Beim ersten Strapi-Start wird die App im Docker-Volume unter `/srv/app` automatisch erzeugt. Das kann 1-2 Minuten dauern.
 
 ### 5.2 Alles gemeinsam starten
 

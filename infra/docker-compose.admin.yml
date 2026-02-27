@@ -38,8 +38,10 @@ services:
       TRANSFER_TOKEN_SALT: ${STRAPI_TRANSFER_TOKEN_SALT}
     ports:
       - "1337:1337"
+    command: >
+      sh -c "if [ ! -f package.json ]; then npx create-strapi-app@latest . --dbclient=postgres --dbhost=$DATABASE_HOST --dbport=$DATABASE_PORT --dbname=$DATABASE_NAME --dbusername=$DATABASE_USERNAME --dbpassword=$DATABASE_PASSWORD --no-run --no-git --skip-cloud --yes; fi && npm run develop"
     volumes:
-      - strapi_data:/opt/app
+      - strapi_data:/srv/app
     depends_on:
       strapi_db:
         condition: service_healthy
@@ -69,7 +71,10 @@ services:
       DB_USER: ${FLARUM_DB_USER:-flarum}
       DB_PASS: ${FLARUM_DB_PASSWORD:-flarum}
       FORUM_TITLE: ${FLARUM_TITLE:-PetWatch Community}
-      SITE_URL: ${FLARUM_SITE_URL:-http://localhost:8080}
+      ADMIN_USER: ${FLARUM_ADMIN_USER:-admin}
+      ADMIN_PASS: ${FLARUM_ADMIN_PASSWORD:-change-me}
+      ADMIN_MAIL: ${FLARUM_ADMIN_EMAIL:-admin@petwatch.local}
+      FORUM_URL: ${FLARUM_SITE_URL:-http://localhost:8080}
     ports:
       - "8080:8888"
     depends_on:
