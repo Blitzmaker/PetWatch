@@ -1,7 +1,8 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { UserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
@@ -21,7 +22,7 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
     const user = await this.prisma.user.create({ data: { email: dto.email, passwordHash } });
-    return this.issueTokens(user.id, user.email);
+    return this.issueTokens(user.id, user.email, user.role);
   }
 
   async login(dto: LoginDto) {
@@ -29,7 +30,16 @@ export class AuthService {
     if (!user || !(await bcrypt.compare(dto.password, user.passwordHash))) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    return this.issueTokens(user.id, user.email);
+
+    if (user.deletedAt) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (user.isBlocked) {
+      throw new ForbiddenException('User is blocked');
+    }
+
+    return this.issueTokens(user.id, user.email, user.role);
   }
 
   async refresh(dto: RefreshDto) {
@@ -42,17 +52,22 @@ export class AuthService {
     }
 
     await this.prisma.refreshToken.delete({ where: { id: matched.id } });
-    return this.issueTokens(payload.sub, payload.email);
+    const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
+    if (!user || user.deletedAt || user.isBlocked) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    return this.issueTokens(payload.sub, payload.email, user.role);
   }
 
   async logout(userId: string) {
     await this.prisma.refreshToken.deleteMany({ where: { userId } });
   }
 
-  private async issueTokens(userId: string, email: string) {
+  private async issueTokens(userId: string, email: string, role: UserRole) {
     const refreshDays = Number(this.configService.get('JWT_REFRESH_EXPIRES_IN_DAYS', '30'));
     const accessToken = await this.jwtService.signAsync(
-      { sub: userId, email },
+      { sub: userId, email, role },
       {
         secret: this.configService.getOrThrow<string>('JWT_ACCESS_SECRET'),
         expiresIn: this.configService.get<string>('JWT_ACCESS_EXPIRES_IN', '15m'),
@@ -60,7 +75,7 @@ export class AuthService {
     );
 
     const refreshToken = await this.jwtService.signAsync(
-      { sub: userId, email },
+      { sub: userId, email, role },
       {
         secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
         expiresIn: `${refreshDays}d`,
@@ -75,7 +90,7 @@ export class AuthService {
       },
     });
 
-    return { user: { id: userId, email }, accessToken, refreshToken };
+    return { user: { id: userId, email, role }, accessToken, refreshToken };
   }
 
   private async findMatchingToken(refreshToken: string, tokens: Array<{ id: string; tokenHash: string; expiresAt: Date }>) {
@@ -87,7 +102,7 @@ export class AuthService {
     return null;
   }
 
-  private async verifyRefresh(token: string): Promise<{ sub: string; email: string }> {
+  private async verifyRefresh(token: string): Promise<{ sub: string; email: string; role: UserRole }> {
     try {
       return await this.jwtService.verifyAsync(token, {
         secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),

@@ -10,8 +10,8 @@ export class FoodsController {
   constructor(private readonly foodsService: FoodsService) {}
 
   @Get('by-barcode/:barcode')
-  findByBarcode(@Param('barcode') barcode: string) {
-    return this.foodsService.findByBarcode(barcode);
+  findByBarcode(@Param('barcode') barcode: string, @CurrentUser('sub') userId: string) {
+    return this.foodsService.findByBarcode(barcode, userId);
   }
 
   @Post()

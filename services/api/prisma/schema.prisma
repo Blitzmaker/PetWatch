@@ -27,16 +27,44 @@ enum MealType {
   SNACK
 }
 
+enum UserRole {
+  USER
+  MODERATOR
+  CURATOR
+  FOOD_REVIEWER
+  ADMIN
+}
+
+enum FoodStatus {
+  DRAFT_LOCAL
+  PENDING_REVIEW
+  APPROVED_PUBLIC
+  REJECTED
+}
+
+enum PublicationStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 model User {
   id            String   @id @default(cuid())
   email         String   @unique
   passwordHash  String
+  role          UserRole @default(USER)
+  isBlocked     Boolean  @default(false)
+  deletedAt     DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   dogs          Dog[]
   foodsCreated  Food[]   @relation("FoodsCreatedBy")
+  foodsReviewed Food[]   @relation("FoodsReviewedBy")
   refreshTokens RefreshToken[]
+  cmsPosts      CmsPost[]
+  threads       CommunityThread[]
+  communityPosts CommunityPost[]
 }
 
 model RefreshToken {
@@ -95,11 +123,89 @@ model Food {
   carbsPer100g   Float?
 
   createdByUserId String?
+  status        FoodStatus @default(DRAFT_LOCAL)
+  reviewedByAdminId String?
+  reviewComment String?
+  approvedAt    DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   createdBy     User?    @relation("FoodsCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  reviewedBy    User?    @relation("FoodsReviewedBy", fields: [reviewedByAdminId], references: [id], onDelete: SetNull)
   mealEntries   MealEntry[]
+}
+
+model CmsCategory {
+  id        String   @id @default(cuid())
+  title     String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  posts     CmsPost[]
+}
+
+model CmsPost {
+  id          String            @id @default(cuid())
+  title       String
+  slug        String            @unique
+  teaser      String?
+  content     String
+  status      PublicationStatus @default(DRAFT)
+  publishedAt DateTime?
+  authorId    String
+  categoryId  String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  author      User              @relation(fields: [authorId], references: [id], onDelete: Restrict)
+  category    CmsCategory?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([status, publishedAt])
+}
+
+model CommunityTopic {
+  id          String            @id @default(cuid())
+  name        String            @unique
+  description String?
+  status      PublicationStatus @default(PUBLISHED)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  threads     CommunityThread[]
+}
+
+model CommunityThread {
+  id          String            @id @default(cuid())
+  topicId     String
+  authorId    String
+  title       String
+  content     String
+  status      PublicationStatus @default(PUBLISHED)
+  isLocked    Boolean           @default(false)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  topic       CommunityTopic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  author      User              @relation(fields: [authorId], references: [id], onDelete: Restrict)
+  posts       CommunityPost[]
+
+  @@index([topicId, createdAt])
+}
+
+model CommunityPost {
+  id          String            @id @default(cuid())
+  threadId    String
+  authorId    String
+  content     String
+  status      PublicationStatus @default(PUBLISHED)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  thread      CommunityThread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  author      User              @relation(fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([threadId, createdAt])
 }
 
 model Meal {
