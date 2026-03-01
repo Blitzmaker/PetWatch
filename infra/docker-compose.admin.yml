@@ -66,15 +66,27 @@ services:
     image: mondedie/flarum:latest
     restart: unless-stopped
     environment:
+      # offizielle Variablennamen des mondedie/flarum Images
+      FLARUM_URL: ${FLARUM_SITE_URL:-http://localhost:8080}
+      FLARUM_TITLE: ${FLARUM_TITLE:-PetWatch Community}
+      FLARUM_ADMIN_USER: ${FLARUM_ADMIN_USER:-admin}
+      FLARUM_ADMIN_PASS: ${FLARUM_ADMIN_PASSWORD:-change-me}
+      FLARUM_ADMIN_MAIL: ${FLARUM_ADMIN_EMAIL:-admin@petwatch.local}
+      MYSQL_HOST: flarum_db
+      MYSQL_DATABASE: ${FLARUM_DB_NAME:-flarum}
+      MYSQL_USER: ${FLARUM_DB_USER:-flarum}
+      MYSQL_PASSWORD: ${FLARUM_DB_PASSWORD:-flarum}
+
+      # Legacy-/Kompatibilitätsvariablen (falls ein älteres Tag genutzt wird)
       DB_HOST: flarum_db
       DB_NAME: ${FLARUM_DB_NAME:-flarum}
       DB_USER: ${FLARUM_DB_USER:-flarum}
       DB_PASS: ${FLARUM_DB_PASSWORD:-flarum}
+      FORUM_URL: ${FLARUM_SITE_URL:-http://localhost:8080}
       FORUM_TITLE: ${FLARUM_TITLE:-PetWatch Community}
       ADMIN_USER: ${FLARUM_ADMIN_USER:-admin}
       ADMIN_PASS: ${FLARUM_ADMIN_PASSWORD:-change-me}
       ADMIN_MAIL: ${FLARUM_ADMIN_EMAIL:-admin@petwatch.local}
-      FORUM_URL: ${FLARUM_SITE_URL:-http://localhost:8080}
     ports:
       - "8080:8888"
     depends_on:
