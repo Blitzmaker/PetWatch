@@ -40,7 +40,7 @@ services:
     ports:
       - "1337:1337"
     command: >
-      sh -c "mkdir -p /srv/app/strapi && if [ ! -f /srv/app/strapi/package.json ]; then npx create-strapi-app@latest /srv/app/strapi --dbclient=postgres --dbhost=$DATABASE_HOST --dbport=$DATABASE_PORT --dbname=$DATABASE_NAME --dbusername=$DATABASE_USERNAME --dbpassword=$DATABASE_PASSWORD --no-run --skip-cloud --no-example --yes; fi && npm --prefix /srv/app/strapi run develop"
+      sh -c "mkdir -p /srv/app/strapi && if [ ! -f /srv/app/strapi/package.json ]; then npx create-strapi-app@latest /srv/app/strapi --dbclient=postgres --dbhost=$DATABASE_HOST --dbport=$DATABASE_PORT --dbname=$DATABASE_NAME --dbusername=$DATABASE_USERNAME --dbpassword=$DATABASE_PASSWORD --no-run --skip-cloud --no-example; fi && npm --prefix /srv/app/strapi run develop"
     volumes:
       - strapi_data:/srv/app
     depends_on:
