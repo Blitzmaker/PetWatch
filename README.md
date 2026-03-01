@@ -272,6 +272,19 @@ FLARUM_ADMIN_EMAIL=admin@petwatch.local
 
 > Hinweis: Beim ersten Strapi-Start wird die App im Docker-Volume unter `/srv/app` automatisch erzeugt. Das kann 1-2 Minuten dauern.
 
+### Fehler: Flarum zeigt nur „Something went wrong while trying to load the full version of this site"
+
+Das passiert meist, wenn die Forum-URL beim ersten Setup anders war als die URL, über die du jetzt zugreifst (z. B. erst `localhost`, später LAN-IP/Domain).
+
+1. `FLARUM_SITE_URL` in `infra/.env` auf die **exakte** Aufruf-URL setzen (inkl. `http://` oder `https://` und Port).
+2. URL + Cache im Container aktualisieren:
+
+```bash
+bash infra/scripts/fix-flarum-url.sh
+```
+
+3. Browser hart neu laden (`Ctrl+F5`).
+
 ### 5.2 Alles gemeinsam starten
 
 ```bash
