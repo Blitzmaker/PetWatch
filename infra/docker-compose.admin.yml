@@ -22,7 +22,7 @@ services:
 
   # Headless CMS für News/Beiträge
   strapi:
-    image: strapi/strapi:latest
+    image: vshadbolt/strapi:latest
     restart: unless-stopped
     environment:
       DATABASE_CLIENT: postgres

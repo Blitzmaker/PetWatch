@@ -236,7 +236,7 @@ docker compose --env-file infra/.env -f infra/docker-compose.yml up -d
 
 Für dein gewünschtes vollständiges Admin-Backend sind jetzt integriert:
 
-- `infra/docker-compose.admin.yml` (Directus + Strapi + Flarum)
+- `infra/docker-compose.admin.yml` (Directus + Strapi [Image: `vshadbolt/strapi`] + Flarum)
 - `docs/admin-backend-konzept.md` (Gesamtkonzept)
 - erweiterte API-/DB-Modelle für Usermanagement, Food-Review, CMS, Community
 
@@ -270,7 +270,7 @@ FLARUM_ADMIN_PASSWORD=change-me
 FLARUM_ADMIN_EMAIL=admin@petwatch.local
 ```
 
-> Hinweis: Beim ersten Strapi-Start wird die App im Docker-Volume unter `/srv/app` automatisch erzeugt. Das kann 1-2 Minuten dauern.
+> Hinweis: Der Stack nutzt für Strapi das Docker-Hub-Image `vshadbolt/strapi`. Beim ersten Start wird die App im Docker-Volume unter `/srv/app` automatisch erzeugt; das kann 1-2 Minuten dauern.
 
 ### Fehler: Flarum zeigt nur „Something went wrong while trying to load the full version of this site"
 
