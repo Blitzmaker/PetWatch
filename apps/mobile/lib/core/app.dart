@@ -4,6 +4,7 @@ import '../features/auth/register_screen.dart';
 import '../features/activities/add_activity_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
 import '../features/dogs/dog_list_screen.dart';
+import '../features/community/community_screen.dart';
 import '../features/dogs/create_dog_screen.dart';
 import '../features/weights/weight_list_screen.dart';
 import '../features/weights/add_weight_screen.dart';
@@ -36,6 +37,7 @@ class DogWatchApp extends StatelessWidget {
         '/register': (_) => const RegisterScreen(),
         '/dashboard': (_) => const DashboardScreen(),
         '/dogs': (_) => const DogListScreen(),
+        '/community': (_) => const CommunityScreen(),
         '/dogs/create': (_) => const CreateDogScreen(),
         '/weights': (_) => const WeightListScreen(),
         '/weights/create': (_) => const AddWeightScreen(),

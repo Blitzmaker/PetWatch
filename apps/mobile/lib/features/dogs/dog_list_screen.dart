@@ -45,7 +45,7 @@ class _DogListScreenState extends ConsumerState<DogListScreen> {
   @override
   Widget build(BuildContext context) {
     return AppShell(
-      currentIndex: 3,
+      currentIndex: 0,
       appBar: AppBar(
         title: const Text('Hunde'),
         actions: [IconButton(onPressed: _logout, icon: const Icon(Icons.logout))],
