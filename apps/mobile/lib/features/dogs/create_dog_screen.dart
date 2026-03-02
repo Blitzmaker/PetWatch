@@ -73,7 +73,7 @@ class _CreateDogScreenState extends ConsumerState<CreateDogScreen> {
   @override
   Widget build(BuildContext context) {
     return AppShell(
-      currentIndex: 3,
+      currentIndex: 0,
       title: 'Hund anlegen',
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

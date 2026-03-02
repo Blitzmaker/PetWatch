@@ -20,48 +20,6 @@ services:
       postgres:
         condition: service_healthy
 
-  # Headless CMS für News/Beiträge
-  strapi:
-    image: vshadbolt/strapi:latest
-    restart: unless-stopped
-    environment:
-      CI: "true"
-      DATABASE_CLIENT: postgres
-      DATABASE_HOST: strapi_db
-      DATABASE_PORT: 5432
-      DATABASE_NAME: ${STRAPI_DB_NAME:-strapi}
-      DATABASE_USERNAME: ${STRAPI_DB_USER:-strapi}
-      DATABASE_PASSWORD: ${STRAPI_DB_PASSWORD:-strapi}
-      JWT_SECRET: ${STRAPI_JWT_SECRET}
-      ADMIN_JWT_SECRET: ${STRAPI_ADMIN_JWT_SECRET}
-      APP_KEYS: ${STRAPI_APP_KEYS}
-      API_TOKEN_SALT: ${STRAPI_API_TOKEN_SALT}
-      TRANSFER_TOKEN_SALT: ${STRAPI_TRANSFER_TOKEN_SALT}
-    ports:
-      - "1337:1337"
-    command: >
-      sh -c "if [ ! -f /srv/app/strapi/package.json ]; then cd /srv/app && npx create-strapi-app@latest strapi --typescript --dbclient=postgres --dbhost=$DATABASE_HOST --dbport=$DATABASE_PORT --dbname=$DATABASE_NAME --dbusername=$DATABASE_USERNAME --dbpassword=$DATABASE_PASSWORD --no-run --skip-cloud --no-example --no-install && npm --prefix /srv/app/strapi install; fi && npm --prefix /srv/app/strapi run develop"
-    volumes:
-      - strapi_data:/srv/app
-    depends_on:
-      strapi_db:
-        condition: service_healthy
-
-  strapi_db:
-    image: postgres:16
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${STRAPI_DB_NAME:-strapi}
-      POSTGRES_USER: ${STRAPI_DB_USER:-strapi}
-      POSTGRES_PASSWORD: ${STRAPI_DB_PASSWORD:-strapi}
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h localhost -p 5432"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    volumes:
-      - strapi_postgres_data:/var/lib/postgresql/data
-
   # Community-Forum
   flarum:
     image: mondedie/flarum:latest
@@ -111,6 +69,4 @@ services:
       - flarum_mariadb_data:/var/lib/mysql
 
 volumes:
-  strapi_data:
-  strapi_postgres_data:
   flarum_mariadb_data:

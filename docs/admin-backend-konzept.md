@@ -34,8 +34,8 @@ Die Integration besteht aus drei Ebenen, die gemeinsam laufen:
    - Neue Admin-Endpunkte unter `/admin/*`.
 2. **Directus (Web-Backoffice)**
    - Sofort nutzbare Admin-Weboberfläche zur Datenpflege.
-3. **Strapi + Flarum (Open-Source für CMS und Forum)**
-   - Strapi für redaktionelle Inhalte.
+3. **Directus + Flarum (Open-Source für CMS und Forum)**
+   - Directus für redaktionelle Inhalte (Collection `cms_posts` etc.).
    - Flarum für Communitybetrieb.
 
 Damit ist alles gleichzeitig integrierbar und in einem gemeinsamen Docker-Verbund lauffähig.

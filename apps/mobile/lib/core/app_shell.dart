@@ -45,7 +45,7 @@ class AppShell extends StatelessWidget {
               _NavItem(icon: Icons.restaurant, label: 'Mahlzeiten', selected: currentIndex == 1, onTap: () => _to(context, '/meals', false)),
               const SizedBox(width: 34),
               _NavItem(icon: Icons.scale, label: 'Gewicht', selected: currentIndex == 2, onTap: () => _to(context, '/weights', false)),
-              _NavItem(icon: Icons.favorite, label: 'Profil', selected: currentIndex == 3, onTap: () => _to(context, '/dogs', false)),
+              _NavItem(icon: Icons.forum, label: 'Community', selected: currentIndex == 3, onTap: () => _to(context, '/community', false)),
             ],
           ),
         ),
