@@ -17,6 +17,10 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
     defaultValue: 'http://10.0.2.2:8055',
   );
   static const _directusToken = String.fromEnvironment('DIRECTUS_STATIC_TOKEN', defaultValue: '');
+  static const _communityCollection = String.fromEnvironment(
+    'DIRECTUS_COMMUNITY_COLLECTION',
+    defaultValue: 'cms_posts',
+  );
 
   late final Dio _dio;
 
@@ -41,12 +45,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
     });
 
     try {
-      final response = await _dio.get('/items/cms_posts', queryParameters: {
-        'sort': '-date_created',
-        'filter[status][_eq]': 'published',
-        'fields': 'id,title,excerpt,content,published_at,date_created',
-        'limit': 50,
-      });
+      final response = await _loadPostsWithFallbackCollection();
 
       final data = (response.data as Map<String, dynamic>)['data'] as List<dynamic>? ?? [];
       setState(() {
@@ -55,11 +54,69 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
       });
     } on DioException catch (e) {
       setState(() {
-        _error = e.response?.data?.toString() ??
-            'Community-Beiträge konnten nicht geladen werden. Prüfe DIRECTUS_BASE_URL und Berechtigungen.';
+        _error = _buildErrorMessage(e);
         _loading = false;
       });
     }
+  }
+
+  Future<Response<dynamic>> _loadPostsWithFallbackCollection() async {
+    final candidateCollections = _candidateCollections();
+    DioException? lastError;
+
+    for (final collection in candidateCollections) {
+      try {
+        return await _dio.get('/items/$collection', queryParameters: {
+          'sort': '-date_created',
+          'filter[status][_eq]': 'published',
+          'fields': 'id,title,excerpt,content,published_at,date_created',
+          'limit': 50,
+        });
+      } on DioException catch (e) {
+        lastError = e;
+        if (!_isForbiddenOrNotFound(e)) {
+          rethrow;
+        }
+      }
+    }
+
+    throw lastError ?? DioException(requestOptions: RequestOptions(path: '/items/${candidateCollections.first}'));
+  }
+
+  List<String> _candidateCollections() {
+    final baseCollection = _communityCollection.trim().isEmpty ? 'cms_posts' : _communityCollection.trim();
+    if (baseCollection == 'cms_post') {
+      return const ['cms_post', 'cms_posts'];
+    }
+    if (baseCollection == 'cms_posts') {
+      return const ['cms_posts', 'cms_post'];
+    }
+    return [baseCollection];
+  }
+
+  bool _isForbiddenOrNotFound(DioException e) {
+    final statusCode = e.response?.statusCode;
+    if (statusCode == 403 || statusCode == 404) {
+      return true;
+    }
+
+    final message = (e.response?.data ?? '').toString().toLowerCase();
+    return message.contains('forbidden') || message.contains('does not exist') || message.contains('permission');
+  }
+
+  String _buildErrorMessage(DioException e) {
+    final details = e.response?.data?.toString();
+    final networkIssue = e.type == DioExceptionType.connectionError || e.type == DioExceptionType.connectionTimeout;
+    if (networkIssue) {
+      return 'Community-Beiträge konnten nicht geladen werden. Prüfe DIRECTUS_BASE_URL (auf einem echten Handy nicht 10.0.2.2 verwenden).';
+    }
+
+    if (_isForbiddenOrNotFound(e)) {
+      return 'Kein Zugriff auf die Community-Collection. Prüfe in Directus die Leserechte für "${_candidateCollections().join(' / ')}" '
+          'oder setze --dart-define=DIRECTUS_COMMUNITY_COLLECTION=<name>.${details != null ? '\n\nAntwort: $details' : ''}';
+    }
+
+    return details ?? 'Community-Beiträge konnten nicht geladen werden. Prüfe DIRECTUS_BASE_URL und Berechtigungen.';
   }
 
   @override
