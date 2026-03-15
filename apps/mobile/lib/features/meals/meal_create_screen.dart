@@ -12,9 +12,20 @@ class MealCreateScreen extends ConsumerStatefulWidget {
 }
 
 class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
-  final _foodId = TextEditingController();
   final _grams = TextEditingController(text: '100');
+  Map<String, dynamic>? _selectedFood;
   String? _error;
+
+  Future<void> _scanBarcode() async {
+    final result = await Navigator.pushNamed(context, '/scan');
+    if (!mounted) return;
+    if (result is Map<String, dynamic>) {
+      setState(() {
+        _selectedFood = result;
+        _error = null;
+      });
+    }
+  }
 
   Future<void> _save() async {
     final dogId = ref.read(selectedDogIdProvider);
@@ -22,11 +33,17 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
       setState(() => _error = 'Kein Hund ausgewählt');
       return;
     }
+    final foodId = _selectedFood?['id'] as String?;
+    if (foodId == null || foodId.isEmpty) {
+      setState(() => _error = 'Bitte zuerst ein Futter per Barcode auswählen.');
+      return;
+    }
+
     try {
       await ref.read(apiClientProvider).dio.post('/dogs/$dogId/meals', data: {
         'eatenAt': DateTime.now().toIso8601String(),
         'entries': [
-          {'foodId': _foodId.text.trim(), 'grams': double.tryParse(_grams.text) ?? 0, 'mealType': 'DINNER'}
+          {'foodId': foodId, 'grams': double.tryParse(_grams.text) ?? 0, 'mealType': 'DINNER'}
         ]
       });
       if (mounted) Navigator.pushReplacementNamed(context, '/meals');
@@ -37,16 +54,39 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedFoodName = _selectedFood?['name'] as String?;
+
     return AppShell(
       currentIndex: 1,
       title: 'Mahlzeit hinzufügen',
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(controller: _foodId, decoration: const InputDecoration(labelText: 'Food ID')),
-            TextField(controller: _grams, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Gramm')),
-            if (_error != null) Text(_error!, style: const TextStyle(color: Colors.red)),
+            Card(
+              child: ListTile(
+                title: Text(selectedFoodName ?? 'Kein Futter ausgewählt'),
+                subtitle: Text(
+                  _selectedFood == null
+                      ? 'Scanne den Barcode, um ein Futter auszuwählen.'
+                      : 'Barcode: ${_selectedFood?['barcode'] ?? '-'}',
+                ),
+                trailing: const Icon(Icons.qr_code_scanner),
+                onTap: _scanBarcode,
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _grams,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: 'Gramm'),
+            ),
+            if (_error != null) ...[
+              const SizedBox(height: 12),
+              Text(_error!, style: const TextStyle(color: Colors.red)),
+            ],
+            const SizedBox(height: 12),
             ElevatedButton(onPressed: _save, child: const Text('Speichern')),
           ],
         ),
