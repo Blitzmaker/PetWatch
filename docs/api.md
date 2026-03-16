@@ -23,6 +23,7 @@ Authenticated endpoints require `Authorization: Bearer <accessToken>`.
 
 ## Foods
 - GET `/foods/by-barcode/:barcode` (nur öffentlich freigegebene oder eigene lokale Foods)
+- GET `/foods/search?q=:query` (Suche in Barcode und Name; maximal 6 Treffer für UI-Hinweis)
 - POST `/foods`
 
 ## Meals

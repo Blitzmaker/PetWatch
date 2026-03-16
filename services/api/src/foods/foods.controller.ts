@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CreateFoodDto } from './dto/create-food.dto';
@@ -12,6 +12,11 @@ export class FoodsController {
   @Get('by-barcode/:barcode')
   findByBarcode(@Param('barcode') barcode: string, @CurrentUser('sub') userId: string) {
     return this.foodsService.findByBarcode(barcode, userId);
+  }
+
+  @Get('search')
+  search(@Query('q') query: string | undefined, @CurrentUser('sub') userId: string) {
+    return this.foodsService.search(query ?? '', userId);
   }
 
   @Post()

@@ -23,6 +23,30 @@ export class FoodsService {
     return food;
   }
 
+  async search(rawQuery: string, userId: string) {
+    const query = rawQuery.trim();
+    if (!query) return [];
+
+    return this.prisma.food.findMany({
+      where: {
+        OR: [
+          { status: FoodStatus.APPROVED_PUBLIC },
+          { createdByUserId: userId, status: FoodStatus.PENDING_REVIEW },
+        ],
+        AND: [
+          {
+            OR: [
+              { barcode: { contains: query, mode: 'insensitive' } },
+              { name: { contains: query, mode: 'insensitive' } },
+            ],
+          },
+        ],
+      },
+      orderBy: [{ name: 'asc' }],
+      take: 6,
+    });
+  }
+
   async create(userId: string, dto: CreateFoodDto) {
     try {
       return await this.prisma.food.create({
