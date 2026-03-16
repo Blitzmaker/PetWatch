@@ -12,7 +12,10 @@ export class FoodsService {
     const food = await this.prisma.food.findFirst({
       where: {
         barcode,
-        OR: [{ status: FoodStatus.APPROVED_PUBLIC }, { createdByUserId: userId }],
+        OR: [
+          { status: FoodStatus.APPROVED_PUBLIC },
+          { createdByUserId: userId, status: FoodStatus.PENDING_REVIEW },
+        ],
       },
     });
 
@@ -23,7 +26,7 @@ export class FoodsService {
   async create(userId: string, dto: CreateFoodDto) {
     try {
       return await this.prisma.food.create({
-        data: { ...dto, createdByUserId: userId, status: FoodStatus.DRAFT_LOCAL },
+        data: { ...dto, createdByUserId: userId, status: FoodStatus.PENDING_REVIEW },
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
