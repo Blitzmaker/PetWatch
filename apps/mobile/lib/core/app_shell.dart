@@ -42,10 +42,10 @@ class AppShell extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _NavItem(icon: Icons.home, label: 'Dashboard', selected: currentIndex == 0, onTap: () => _to(context, '/dashboard', true)),
-              _NavItem(icon: Icons.restaurant, label: 'Mahlzeiten', selected: currentIndex == 1, onTap: () => _to(context, '/meals', false)),
+              _NavItem(icon: Icons.article, label: 'News', selected: currentIndex == 1, onTap: () => _to(context, '/news', false)),
               const SizedBox(width: 34),
-              _NavItem(icon: Icons.scale, label: 'Gewicht', selected: currentIndex == 2, onTap: () => _to(context, '/weights', false)),
-              _NavItem(icon: Icons.forum, label: 'Community', selected: currentIndex == 3, onTap: () => _to(context, '/community', false)),
+              _NavItem(icon: Icons.forum, label: 'Community', selected: currentIndex == 2, onTap: () => _to(context, '/community', false)),
+              _NavItem(icon: Icons.settings, label: 'Settings', selected: currentIndex == 3, onTap: () => _to(context, '/settings', false)),
             ],
           ),
         ),
