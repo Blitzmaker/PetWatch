@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../core/app_shell.dart';
 import '../../core/providers.dart';
 
@@ -12,10 +16,13 @@ class MealCreateScreen extends ConsumerStatefulWidget {
 }
 
 class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
-  final _barcode = TextEditingController();
+  final _search = TextEditingController();
   final _grams = TextEditingController(text: '100');
 
   Map<String, dynamic>? _selectedFood;
+  List<Map<String, dynamic>> _searchResults = [];
+  bool _hasMoreResults = false;
+  Timer? _searchDebounce;
   String? _error;
   late String _mealType;
 
@@ -32,35 +39,66 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
     return 'DINNER';
   }
 
-  Future<void> _lookupBarcode() async {
-    final barcode = _barcode.text.trim();
-    if (barcode.isEmpty) {
-      setState(() => _error = 'Bitte einen Barcode eingeben oder scannen.');
+  Future<void> _searchFoods() async {
+    final query = _search.text.trim();
+    if (query.isEmpty) {
+      setState(() {
+        _searchResults = [];
+        _hasMoreResults = false;
+        _error = null;
+      });
       return;
     }
 
     try {
-      final response = await ref.read(apiClientProvider).dio.get('/foods/by-barcode/$barcode');
+      final response = await ref.read(apiClientProvider).dio.get('/foods/search', queryParameters: {'q': query});
+      final resultList = (response.data as List<dynamic>).cast<Map<String, dynamic>>();
       setState(() {
-        _selectedFood = response.data as Map<String, dynamic>;
+        _searchResults = resultList.take(5).toList();
+        _hasMoreResults = resultList.length > 5;
         _error = null;
       });
     } on DioException catch (e) {
-      if (e.response?.statusCode == 404) {
-        setState(() {
-          _selectedFood = null;
-          _error = 'Kein passendes Futter gefunden.';
-        });
-        return;
-      }
-      setState(() => _error = e.response?.data?.toString() ?? 'Barcode-Abgleich fehlgeschlagen');
+      setState(() {
+        _searchResults = [];
+        _hasMoreResults = false;
+        _error = e.response?.data?.toString() ?? 'Suche fehlgeschlagen';
+      });
     }
   }
 
+  void _onSearchChanged(String _) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 250), _searchFoods);
+  }
+
+  void _selectFood(Map<String, dynamic> food) {
+    setState(() {
+      _selectedFood = food;
+      _search.text = food['name'] as String? ?? (food['barcode'] as String? ?? '');
+      _searchResults = [];
+      _hasMoreResults = false;
+      _error = null;
+    });
+  }
+
+  Future<void> _openScannerModal() async {
+    final scannedBarcode = await showDialog<String>(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => const _BarcodeScannerDialog(),
+    );
+
+    if (scannedBarcode == null || scannedBarcode.isEmpty) return;
+
+    _search.text = scannedBarcode;
+    await _searchFoods();
+  }
+
   Future<void> _openFoodCreate() async {
-    await Navigator.pushNamed(context, '/foods/create', arguments: _barcode.text.trim());
-    if (_barcode.text.trim().isNotEmpty) {
-      await _lookupBarcode();
+    await Navigator.pushNamed(context, '/foods/create', arguments: _search.text.trim());
+    if (_search.text.trim().isNotEmpty) {
+      await _searchFoods();
     }
   }
 
@@ -72,7 +110,7 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
     }
     final selectedFoodId = _selectedFood?['id'] as String?;
     if (selectedFoodId == null) {
-      setState(() => _error = 'Bitte zuerst ein Futter per Barcode auswählen.');
+      setState(() => _error = 'Bitte zuerst ein Futter auswählen.');
       return;
     }
 
@@ -131,6 +169,42 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
     );
   }
 
+  Widget _buildSearchResultsDropdown() {
+    if (_searchResults.isEmpty && !_hasMoreResults) return const SizedBox.shrink();
+
+    return Container(
+      margin: const EdgeInsets.only(top: 4),
+      decoration: BoxDecoration(
+        border: Border.all(color: Theme.of(context).dividerColor),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        children: [
+          for (final food in _searchResults)
+            ListTile(
+              dense: true,
+              title: Text(food['name'] as String? ?? '-'),
+              subtitle: Text(food['barcode'] as String? ?? '-'),
+              onTap: () => _selectFood(food),
+            ),
+          if (_hasMoreResults)
+            const ListTile(
+              dense: true,
+              title: Text('... und weitere'),
+            ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _searchDebounce?.cancel();
+    _search.dispose();
+    _grams.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppShell(
@@ -140,29 +214,25 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
         padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
-            TextField(controller: _barcode, decoration: const InputDecoration(labelText: 'Barcode eingeben oder scannen')),
-            const SizedBox(height: 8),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: ElevatedButton(onPressed: _lookupBarcode, child: const Text('Barcode abgleichen'))),
-                const SizedBox(width: 8),
                 Expanded(
-                  child: OutlinedButton(
-                    onPressed: () async {
-                      final result = await Navigator.pushNamed(context, '/scan');
-                      if (result is Map<String, dynamic>) {
-                        setState(() {
-                          _selectedFood = result;
-                          _barcode.text = result['barcode'] as String? ?? _barcode.text;
-                          _error = null;
-                        });
-                      }
-                    },
-                    child: const Text('Barcode scannen'),
+                  child: TextField(
+                    controller: _search,
+                    onChanged: _onSearchChanged,
+                    decoration: const InputDecoration(labelText: 'Mahlzeit suchen:'),
                   ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  onPressed: _openScannerModal,
+                  icon: const Icon(Icons.camera_alt),
+                  tooltip: 'Barcode scannen',
                 ),
               ],
             ),
+            _buildSearchResultsDropdown(),
             const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerLeft,
@@ -193,6 +263,65 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
             _buildNutrientsPreview(),
             if (_error != null) Text(_error!, style: const TextStyle(color: Colors.red)),
             ElevatedButton(onPressed: _save, child: const Text('Speichern')),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BarcodeScannerDialog extends StatefulWidget {
+  const _BarcodeScannerDialog();
+
+  @override
+  State<_BarcodeScannerDialog> createState() => _BarcodeScannerDialogState();
+}
+
+class _BarcodeScannerDialogState extends State<_BarcodeScannerDialog> {
+  final MobileScannerController _scannerController = MobileScannerController();
+  bool _isProcessing = false;
+
+  Future<void> _onDetect(BarcodeCapture capture) async {
+    if (_isProcessing) return;
+    final rawValue = capture.barcodes.isEmpty ? null : capture.barcodes.first.rawValue;
+    final barcode = rawValue?.trim();
+    if (barcode == null || barcode.isEmpty) return;
+
+    _isProcessing = true;
+    await _scannerController.stop();
+    await HapticFeedback.lightImpact();
+
+    if (mounted) {
+      Navigator.pop(context, barcode);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scannerController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Barcode scannen', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 320,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: MobileScanner(
+                  controller: _scannerController,
+                  onDetect: _onDetect,
+                ),
+              ),
+            ),
           ],
         ),
       ),
