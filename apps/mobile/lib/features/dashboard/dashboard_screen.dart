@@ -158,11 +158,25 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   children: [
-                    Expanded(child: _StatCard(title: 'Mahlzeiten\nheute', value: '$mealsToday / 3', icon: Icons.restaurant)),
+                    Expanded(
+                      child: _StatCard(
+                        title: 'Mahlzeiten\nheute',
+                        value: '$mealsToday / 3',
+                        icon: Icons.restaurant,
+                        onTap: () => Navigator.pushNamed(context, '/meals'),
+                      ),
+                    ),
                     const SizedBox(width: 10),
                     Expanded(child: _StatCard(title: 'Aktivität\nheute', value: 'Niedrig', icon: Icons.pets)),
                     const SizedBox(width: 10),
-                    Expanded(child: _StatCard(title: 'Letztes\nWiegen', value: lastWeighingText, icon: Icons.monitor_weight)),
+                    Expanded(
+                      child: _StatCard(
+                        title: 'Letztes\nWiegen',
+                        value: lastWeighingText,
+                        icon: Icons.monitor_weight,
+                        onTap: () => Navigator.pushNamed(context, '/weights'),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -291,27 +305,32 @@ class _CalorieRing extends StatelessWidget {
 }
 
 class _StatCard extends StatelessWidget {
-  const _StatCard({required this.title, required this.value, required this.icon});
+  const _StatCard({required this.title, required this.value, required this.icon, this.onTap});
 
   final String title;
   final String value;
   final IconData icon;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 158,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: const Color(0xFFF0F2F2), borderRadius: BorderRadius.circular(18), boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 5, offset: Offset(0, 3))]),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: const TextStyle(fontFamily: 'SourGummy', color: Color(0xFF1CB392), fontWeight: FontWeight.w600, fontSize: 15)),
-          const Spacer(),
-          Center(child: Icon(icon, color: const Color(0xFF2CB89D), size: 38)),
-          const Spacer(),
-          Center(child: Text(value, style: const TextStyle(fontFamily: 'RobotoCondensed', fontSize: 16, fontWeight: FontWeight.w500, color: Color(0xFF163847)))),
-        ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Ink(
+        height: 158,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(color: const Color(0xFFF0F2F2), borderRadius: BorderRadius.circular(18), boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 5, offset: Offset(0, 3))]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: const TextStyle(fontFamily: 'SourGummy', color: Color(0xFF1CB392), fontWeight: FontWeight.w600, fontSize: 15)),
+            const Spacer(),
+            Center(child: Icon(icon, color: const Color(0xFF2CB89D), size: 38)),
+            const Spacer(),
+            Center(child: Text(value, style: const TextStyle(fontFamily: 'RobotoCondensed', fontSize: 16, fontWeight: FontWeight.w500, color: Color(0xFF163847)))),
+          ],
+        ),
       ),
     );
   }
