@@ -23,6 +23,7 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
   List<Map<String, dynamic>> _searchResults = [];
   bool _hasMoreResults = false;
   Timer? _searchDebounce;
+  int _latestSearchRequestId = 0;
   String? _error;
   late String _mealType;
 
@@ -40,9 +41,11 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
   }
 
   Future<void> _searchFoods() async {
+    final requestId = ++_latestSearchRequestId;
     final query = _search.text.trim();
     if (query.isEmpty) {
       setState(() {
+        _selectedFood = null;
         _searchResults = [];
         _hasMoreResults = false;
         _error = null;
@@ -52,14 +55,26 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
 
     try {
       final response = await ref.read(apiClientProvider).dio.get('/foods/search', queryParameters: {'q': query});
+
+      if (!mounted || requestId != _latestSearchRequestId) return;
+
       final resultList = (response.data as List<dynamic>).cast<Map<String, dynamic>>();
       setState(() {
         _searchResults = resultList.take(5).toList();
         _hasMoreResults = resultList.length > 5;
+        final selectedFoodName = _selectedFood?['name'] as String?;
+        final selectedFoodBarcode = _selectedFood?['barcode'] as String?;
+        final searchTerm = _search.text.trim();
+        if (selectedFoodName != searchTerm && selectedFoodBarcode != searchTerm) {
+          _selectedFood = null;
+        }
         _error = null;
       });
     } on DioException catch (e) {
+      if (!mounted || requestId != _latestSearchRequestId) return;
+
       setState(() {
+        _selectedFood = null;
         _searchResults = [];
         _hasMoreResults = false;
         _error = e.response?.data?.toString() ?? 'Suche fehlgeschlagen';
@@ -69,7 +84,7 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
 
   void _onSearchChanged(String _) {
     _searchDebounce?.cancel();
-    _searchDebounce = Timer(const Duration(milliseconds: 250), _searchFoods);
+    _searchDebounce = Timer(const Duration(milliseconds: 150), _searchFoods);
   }
 
   void _selectFood(Map<String, dynamic> food) {
