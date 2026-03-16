@@ -41,7 +41,7 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
   @override
   Widget build(BuildContext context) {
     return AppShell(
-      currentIndex: 2,
+      currentIndex: -1,
       title: 'Gewichte',
       body: _error != null
           ? Center(child: Text(_error!, style: const TextStyle(color: Colors.red)))
