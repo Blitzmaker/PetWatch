@@ -14,7 +14,10 @@ export class FoodsService {
         barcode,
         OR: [
           { status: FoodStatus.APPROVED_PUBLIC },
-          { createdByUserId: userId, status: FoodStatus.PENDING_REVIEW },
+          {
+            createdByUserId: userId,
+            status: { in: [FoodStatus.DRAFT_LOCAL, FoodStatus.PENDING_REVIEW] },
+          },
         ],
       },
     });
@@ -31,7 +34,10 @@ export class FoodsService {
       where: {
         OR: [
           { status: FoodStatus.APPROVED_PUBLIC },
-          { createdByUserId: userId, status: FoodStatus.PENDING_REVIEW },
+          {
+            createdByUserId: userId,
+            status: { in: [FoodStatus.DRAFT_LOCAL, FoodStatus.PENDING_REVIEW] },
+          },
         ],
         AND: [
           {

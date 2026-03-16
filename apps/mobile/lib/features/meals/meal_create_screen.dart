@@ -22,6 +22,7 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
   Map<String, dynamic>? _selectedFood;
   List<Map<String, dynamic>> _searchResults = [];
   bool _hasMoreResults = false;
+  bool _notFound = false;
   Timer? _searchDebounce;
   int _latestSearchRequestId = 0;
   String? _error;
@@ -48,6 +49,7 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
         _selectedFood = null;
         _searchResults = [];
         _hasMoreResults = false;
+        _notFound = false;
         _error = null;
       });
       return;
@@ -62,6 +64,7 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
       setState(() {
         _searchResults = resultList.take(5).toList();
         _hasMoreResults = resultList.length > 5;
+        _notFound = resultList.isEmpty;
         final selectedFoodName = _selectedFood?['name'] as String?;
         final selectedFoodBarcode = _selectedFood?['barcode'] as String?;
         final searchTerm = _search.text.trim();
@@ -77,6 +80,7 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
         _selectedFood = null;
         _searchResults = [];
         _hasMoreResults = false;
+        _notFound = false;
         _error = e.response?.data?.toString() ?? 'Suche fehlgeschlagen';
       });
     }
@@ -93,6 +97,7 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
       _search.text = food['name'] as String? ?? (food['barcode'] as String? ?? '');
       _searchResults = [];
       _hasMoreResults = false;
+      _notFound = false;
       _error = null;
     });
   }
@@ -185,7 +190,7 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
   }
 
   Widget _buildSearchResultsDropdown() {
-    if (_searchResults.isEmpty && !_hasMoreResults) return const SizedBox.shrink();
+    if (_searchResults.isEmpty && !_hasMoreResults && !_notFound) return const SizedBox.shrink();
 
     return Container(
       margin: const EdgeInsets.only(top: 4),
@@ -201,6 +206,12 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
               title: Text(food['name'] as String? ?? '-'),
               subtitle: Text(food['barcode'] as String? ?? '-'),
               onTap: () => _selectFood(food),
+            ),
+          if (_notFound)
+            const ListTile(
+              dense: true,
+              title: Text('Nahrungsmittel nicht gefunden.'),
+              subtitle: Text('Bitte Suche verfeinern oder neues Futter anlegen.'),
             ),
           if (_hasMoreResults)
             const ListTile(
