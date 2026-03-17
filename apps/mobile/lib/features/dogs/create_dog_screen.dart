@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:advanced_searchable_dropdown/advanced_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/app_shell.dart';
@@ -80,11 +81,14 @@ class _CreateDogScreenState extends ConsumerState<CreateDogScreen> {
         child: Column(
           children: [
             TextField(controller: _name, decoration: const InputDecoration(labelText: 'Name')),
-            DropdownButtonFormField<String>(
+            SearchableDropDown(
               value: _breed,
+              hintText: 'Rasse',
               decoration: const InputDecoration(labelText: 'Rasse'),
-              items: dogBreeds.map((breed) => DropdownMenuItem(value: breed, child: Text(breed))).toList(),
-              onChanged: (value) => setState(() => _breed = value),
+              menuList: dogBreeds
+                  .map((breed) => SearchableDropDownItem(label: breed, value: breed))
+                  .toList(),
+              onSelected: (item) => setState(() => _breed = item.value as String),
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,

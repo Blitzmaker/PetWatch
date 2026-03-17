@@ -17,6 +17,7 @@ class MealCreateScreen extends ConsumerStatefulWidget {
 
 class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
   final _search = TextEditingController();
+  final _searchFocusNode = FocusNode();
   final _grams = TextEditingController(text: '100');
 
   Map<String, dynamic>? _selectedFood;
@@ -193,6 +194,7 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
   void dispose() {
     _searchDebounce?.cancel();
     _search.dispose();
+    _searchFocusNode.dispose();
     _grams.dispose();
     super.dispose();
   }
@@ -212,6 +214,7 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
                 Expanded(
                   child: RawAutocomplete<Map<String, dynamic>>(
                     textEditingController: _search,
+                    focusNode: _searchFocusNode,
                     optionsBuilder: (textEditingValue) {
                       _onSearchChanged(textEditingValue.text);
                       final query = textEditingValue.text.trim();
