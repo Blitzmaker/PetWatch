@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:advanced_searchable_dropdown/advanced_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -190,62 +189,6 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
     );
   }
 
-  Widget _buildSearchResultsDropdown() {
-    if (_searchResults.isEmpty && !_hasMoreResults && !_notFound) return const SizedBox.shrink();
-
-    if (_searchResults.isNotEmpty) {
-      final dropdownItems = _searchResults
-          .map(
-            (food) => SearchableDropDownItem(
-              label: '${food['name'] as String? ?? '-'} • ${food['barcode'] as String? ?? '-'}',
-              value: food['id'] as String? ?? '',
-            ),
-          )
-          .toList(growable: false);
-
-      return SearchableDropDown(
-        menuList: dropdownItems,
-        value: _selectedFood?['id'] as String? ?? '',
-        label: const Text('Nahrungsmittel auswählen'),
-        hintText: 'Nahrungsmittel auswählen',
-        onSelected: (item) {
-          final food = _searchResults.firstWhere((result) => (result['id'] as String? ?? '') == item.value);
-          _selectFood(food);
-        },
-      );
-    }
-
-    return Container(
-      margin: const EdgeInsets.only(top: 4),
-      decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).dividerColor),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        children: [
-          for (final food in _searchResults)
-            ListTile(
-              dense: true,
-              title: Text(food['name'] as String? ?? '-'),
-              subtitle: Text(food['barcode'] as String? ?? '-'),
-              onTap: () => _selectFood(food),
-            ),
-          if (_notFound)
-            const ListTile(
-              dense: true,
-              title: Text('Nahrungsmittel nicht gefunden.'),
-              subtitle: Text('Bitte Suche verfeinern oder neues Futter anlegen.'),
-            ),
-          if (_hasMoreResults)
-            const ListTile(
-              dense: true,
-              title: Text('... und weitere'),
-            ),
-        ],
-      ),
-    );
-  }
-
   @override
   void dispose() {
     _searchDebounce?.cancel();
@@ -267,10 +210,61 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: _search,
-                    onChanged: _onSearchChanged,
-                    decoration: const InputDecoration(labelText: 'Mahlzeit suchen:'),
+                  child: RawAutocomplete<Map<String, dynamic>>(
+                    textEditingController: _search,
+                    optionsBuilder: (textEditingValue) {
+                      _onSearchChanged(textEditingValue.text);
+                      final query = textEditingValue.text.trim();
+                      if (query.isEmpty) {
+                        return const Iterable<Map<String, dynamic>>.empty();
+                      }
+                      return _searchResults;
+                    },
+                    displayStringForOption: (food) => food['name'] as String? ?? '-',
+                    onSelected: _selectFood,
+                    fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                      return TextField(
+                        controller: controller,
+                        focusNode: focusNode,
+                        decoration: const InputDecoration(labelText: 'Mahlzeit suchen:'),
+                        onSubmitted: (_) => onFieldSubmitted(),
+                      );
+                    },
+                    optionsViewBuilder: (context, onSelected, options) {
+                      return Align(
+                        alignment: Alignment.topLeft,
+                        child: Material(
+                          elevation: 4,
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxHeight: 280, minWidth: 260),
+                            child: ListView(
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              children: [
+                                for (final option in options)
+                                  ListTile(
+                                    dense: true,
+                                    title: Text(option['name'] as String? ?? '-'),
+                                    subtitle: Text(option['barcode'] as String? ?? '-'),
+                                    onTap: () => onSelected(option),
+                                  ),
+                                if (_notFound)
+                                  const ListTile(
+                                    dense: true,
+                                    title: Text('Nahrungsmittel nicht gefunden.'),
+                                    subtitle: Text('Bitte Suche verfeinern oder neues Futter anlegen.'),
+                                  ),
+                                if (_hasMoreResults)
+                                  const ListTile(
+                                    dense: true,
+                                    title: Text('... und weitere'),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -281,7 +275,6 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
                 ),
               ],
             ),
-            _buildSearchResultsDropdown(),
             const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerLeft,

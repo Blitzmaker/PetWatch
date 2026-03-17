@@ -24,7 +24,7 @@ class DogWatchApp extends StatelessWidget {
       title: 'DogWatch',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2CB89D)),
-        scaffoldBackgroundColor: const Color(0xFFBFE3D4),
+        scaffoldBackgroundColor: Colors.white,
         useMaterial3: true,
         fontFamily: 'RobotoCondensed',
         textTheme: ThemeData.light().textTheme.apply(
