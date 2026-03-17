@@ -206,20 +206,16 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
 
       if (!_advancedDropdownUnavailable) {
         try {
-          return Function.apply(
-            AdvancedSearchableDropDown<_FoodOption>.new,
-            const [],
-            {
-              #items: options,
-              #itemAsString: (dynamic value) => (value as _FoodOption).label,
-              #onChanged: (dynamic value) {
-                if (value is! _FoodOption) return;
-                final matchedFood = _searchResults.firstWhere((food) => (food['id'] as String? ?? '') == value.id);
-                _selectFood(matchedFood);
-              },
-              #decoration: const InputDecoration(labelText: 'Nahrungsmittel auswählen'),
+          return AdvancedSearchableDropDown<_FoodOption>(
+            items: options,
+            itemAsString: (value) => value.label,
+            onChanged: (value) {
+              if (value == null) return;
+              final matchedFood = _searchResults.firstWhere((food) => (food['id'] as String? ?? '') == value.id);
+              _selectFood(matchedFood);
             },
-          ) as Widget;
+            decoration: const InputDecoration(labelText: 'Nahrungsmittel auswählen'),
+          );
         } catch (_) {
           _advancedDropdownUnavailable = true;
         }
