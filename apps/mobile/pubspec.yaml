@@ -14,6 +14,7 @@ dependencies:
   shared_preferences: ^2.3.2
   mobile_scanner: ^5.2.3
   webview_flutter: ^4.8.0
+  advanced_searchable_dropdown: any
 
 dev_dependencies:
   flutter_test:
