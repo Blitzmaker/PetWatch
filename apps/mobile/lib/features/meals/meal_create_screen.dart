@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:advanced_searchable_dropdown/advanced_searchable_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,6 +24,7 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
   List<Map<String, dynamic>> _searchResults = [];
   bool _hasMoreResults = false;
   bool _notFound = false;
+  bool _advancedDropdownUnavailable = false;
   Timer? _searchDebounce;
   int _latestSearchRequestId = 0;
   String? _error;
@@ -192,6 +194,55 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
   Widget _buildSearchResultsDropdown() {
     if (_searchResults.isEmpty && !_hasMoreResults && !_notFound) return const SizedBox.shrink();
 
+    if (_searchResults.isNotEmpty) {
+      final options = _searchResults
+          .map(
+            (food) => _FoodOption(
+              id: food['id'] as String? ?? '',
+              label: '${food['name'] as String? ?? '-'} • ${food['barcode'] as String? ?? '-'}',
+            ),
+          )
+          .toList(growable: false);
+
+      if (!_advancedDropdownUnavailable) {
+        try {
+          return Function.apply(
+            AdvancedSearchableDropDown<_FoodOption>.new,
+            const [],
+            {
+              #items: options,
+              #itemAsString: (dynamic value) => (value as _FoodOption).label,
+              #onChanged: (dynamic value) {
+                if (value is! _FoodOption) return;
+                final matchedFood = _searchResults.firstWhere((food) => (food['id'] as String? ?? '') == value.id);
+                _selectFood(matchedFood);
+              },
+              #decoration: const InputDecoration(labelText: 'Nahrungsmittel auswählen'),
+            },
+          ) as Widget;
+        } catch (_) {
+          _advancedDropdownUnavailable = true;
+        }
+      }
+
+      return DropdownButtonFormField<String>(
+        decoration: const InputDecoration(labelText: 'Nahrungsmittel auswählen'),
+        items: _searchResults
+            .map(
+              (food) => DropdownMenuItem<String>(
+                value: food['id'] as String?,
+                child: Text('${food['name'] as String? ?? '-'} • ${food['barcode'] as String? ?? '-'}'),
+              ),
+            )
+            .toList(),
+        onChanged: (value) {
+          if (value == null) return;
+          final food = _searchResults.firstWhere((item) => item['id'] == value);
+          _selectFood(food);
+        },
+      );
+    }
+
     return Container(
       margin: const EdgeInsets.only(top: 4),
       decoration: BoxDecoration(
@@ -301,6 +352,13 @@ class _BarcodeScannerDialog extends StatefulWidget {
 
   @override
   State<_BarcodeScannerDialog> createState() => _BarcodeScannerDialogState();
+}
+
+class _FoodOption {
+  const _FoodOption({required this.id, required this.label});
+
+  final String id;
+  final String label;
 }
 
 class _BarcodeScannerDialogState extends State<_BarcodeScannerDialog> {
