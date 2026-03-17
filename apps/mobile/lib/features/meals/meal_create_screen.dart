@@ -206,7 +206,7 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
       return SearchableDropDown(
         menuList: dropdownItems,
         value: _selectedFood?['id'] as String? ?? '',
-        label: 'Nahrungsmittel auswählen',
+        label: const Text('Nahrungsmittel auswählen'),
         hintText: 'Nahrungsmittel auswählen',
         onSelected: (item) {
           final food = _searchResults.firstWhere((result) => (result['id'] as String? ?? '') == item.value);
