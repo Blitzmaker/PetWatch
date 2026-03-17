@@ -207,7 +207,7 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
       if (!_advancedDropdownUnavailable) {
         try {
           return Function.apply(
-            AdvancedSearchableDropdown<_FoodOption>.new,
+            AdvancedSearchableDropDown<_FoodOption>.new,
             const [],
             {
               #items: options,
