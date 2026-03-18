@@ -49,3 +49,12 @@ Authenticated endpoints require `Authorization: Bearer <accessToken>`.
 - POST `/admin/community/threads`
 - GET `/admin/community/threads/:threadId/posts`
 - POST `/admin/community/posts`
+
+
+### Food payload
+`POST /foods` erwartet jetzt folgende Nährwertfelder:
+- `kcalPer100g` (`integer`)
+- `proteinPercent` (`number`, optional, 0-100)
+- `fatPercent` (`number`, optional, 0-100)
+- `crudeAshPercent` (`number`, optional, 0-100)
+- `crudeFiberPercent` (`number`, optional, 0-100)

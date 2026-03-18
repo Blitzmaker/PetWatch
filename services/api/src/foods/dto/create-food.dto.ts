@@ -1,4 +1,4 @@
-import { IsInt, IsNumber, IsOptional, IsString, Min } from "class-validator";
+import { IsInt, IsNumber, IsOptional, IsString, Max, Min } from "class-validator";
 
 export class CreateFoodDto {
   @IsString()
@@ -18,15 +18,24 @@ export class CreateFoodDto {
   @IsOptional()
   @IsNumber()
   @Min(0)
-  proteinPer100g?: number;
+  @Max(100)
+  proteinPercent?: number;
 
   @IsOptional()
   @IsNumber()
   @Min(0)
-  fatPer100g?: number;
+  @Max(100)
+  fatPercent?: number;
 
   @IsOptional()
   @IsNumber()
   @Min(0)
-  carbsPer100g?: number;
+  @Max(100)
+  crudeAshPercent?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(100)
+  crudeFiberPercent?: number;
 }
