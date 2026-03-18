@@ -1,4 +1,4 @@
-import { IsDateString, IsEnum, IsNumber, IsOptional, IsString, Min } from "class-validator";
+import { IsBoolean, IsDateString, IsEnum, IsNumber, IsOptional, IsString, Min } from "class-validator";
 
 export enum Sex {
   MALE = "MALE",
@@ -37,4 +37,18 @@ export class CreateDogDto {
   @IsOptional()
   @IsEnum(ActivityLevel)
   activityLevel?: ActivityLevel;
+
+  @IsOptional()
+  @IsBoolean()
+  isNeutered?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  dailyKcalTarget?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  currentWeightKg?: number;
 }
