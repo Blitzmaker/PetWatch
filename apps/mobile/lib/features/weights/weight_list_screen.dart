@@ -128,9 +128,10 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
     final weights = chartEntries.map(_weightValue).toList();
     final minWeight = weights.reduce(math.min);
     final maxWeight = weights.reduce(math.max);
-    final padding = math.max((maxWeight - minWeight) * 0.2, 0.5);
-    final minY = math.max(0, minWeight - padding);
-    final maxY = maxWeight + padding;
+    final padding = math.max((maxWeight - minWeight) * 0.2, 0.5).toDouble();
+    final minY = math.max(0.0, minWeight - padding).toDouble();
+    final maxY = (maxWeight + padding).toDouble();
+    final yInterval = math.max((maxY - minY) / 4, 0.5).toDouble();
 
     final spots = <FlSpot>[
       for (var i = 0; i < chartEntries.length; i++) FlSpot(i.toDouble(), _weightValue(chartEntries[i])),
@@ -185,7 +186,7 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
                 clipData: const FlClipData.all(),
                 gridData: FlGridData(
                   show: true,
-                  horizontalInterval: math.max(((maxY - minY) / 4), 0.5),
+                  horizontalInterval: yInterval,
                   drawVerticalLine: false,
                   getDrawingHorizontalLine: (value) => FlLine(
                     color: const Color(0x1A2CB89D),
@@ -208,7 +209,7 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: 52,
-                      interval: math.max(((maxY - minY) / 4), 0.5),
+                      interval: yInterval,
                       getTitlesWidget: (value, meta) => Text(
                         value.toStringAsFixed(1),
                         style: const TextStyle(fontSize: 11),
@@ -231,14 +232,12 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
                           return const SizedBox.shrink();
                         }
                         return SideTitleWidget(
-                          meta: meta,
+                          axisSide: meta.axisSide,
                           space: 10,
-                          child: Transform.rotate(
-                            angle: -0.45,
-                            child: Text(
-                              _formatDate(chartEntries[index]['date']),
-                              style: const TextStyle(fontSize: 10),
-                            ),
+                          angle: -0.45,
+                          child: Text(
+                            _formatDate(chartEntries[index]['date']),
+                            style: const TextStyle(fontSize: 10),
                           ),
                         );
                       },
