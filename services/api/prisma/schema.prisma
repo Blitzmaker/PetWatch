@@ -117,10 +117,11 @@ model Food {
   barcode      String   @unique
   name         String
   brand        String?
-  kcalPer100g  Int
-  proteinPer100g Float?
-  fatPer100g     Float?
-  carbsPer100g   Float?
+  kcalPer100g       Int
+  proteinPercent    Float?
+  fatPercent        Float?
+  crudeAshPercent   Float?
+  crudeFiberPercent Float?
 
   createdByUserId String?
   status        FoodStatus @default(DRAFT_LOCAL)

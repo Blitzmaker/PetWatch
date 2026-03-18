@@ -168,9 +168,10 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
     final factor = grams / 100;
 
     final kcal = ((_selectedFood!['kcalPer100g'] as num?) ?? 0) * factor;
-    final protein = ((_selectedFood!['proteinPer100g'] as num?) ?? 0) * factor;
-    final fat = ((_selectedFood!['fatPer100g'] as num?) ?? 0) * factor;
-    final carbs = ((_selectedFood!['carbsPer100g'] as num?) ?? 0) * factor;
+    final protein = ((_selectedFood!['proteinPercent'] as num?) ?? 0) * factor;
+    final fat = ((_selectedFood!['fatPercent'] as num?) ?? 0) * factor;
+    final crudeAsh = ((_selectedFood!['crudeAshPercent'] as num?) ?? 0) * factor;
+    final crudeFiber = ((_selectedFood!['crudeFiberPercent'] as num?) ?? 0) * factor;
 
     return Card(
       child: Padding(
@@ -182,8 +183,9 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
             Text('Portion: ${grams.toStringAsFixed(0)} g'),
             Text('kcal: ${kcal.toStringAsFixed(1)}'),
             Text('Protein: ${protein.toStringAsFixed(1)} g'),
-            Text('Fett: ${fat.toStringAsFixed(1)} g'),
-            Text('Kohlenhydrate: ${carbs.toStringAsFixed(1)} g'),
+            Text('Fettgehalt: ${fat.toStringAsFixed(1)} g'),
+            Text('Rohasche: ${crudeAsh.toStringAsFixed(1)} g'),
+            Text('Rohfaser: ${crudeFiber.toStringAsFixed(1)} g'),
           ],
         ),
       ),
