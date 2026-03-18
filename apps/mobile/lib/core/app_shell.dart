@@ -9,6 +9,9 @@ class AppShell extends StatelessWidget {
     this.actions,
     this.backgroundColor,
     this.appBar,
+    this.floatingActionButton,
+    this.floatingActionButtonLocation,
+    this.showQuickActionButton = true,
   });
 
   final Widget body;
@@ -17,6 +20,9 @@ class AppShell extends StatelessWidget {
   final List<Widget>? actions;
   final Color? backgroundColor;
   final PreferredSizeWidget? appBar;
+  final Widget? floatingActionButton;
+  final FloatingActionButtonLocation? floatingActionButtonLocation;
+  final bool showQuickActionButton;
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +31,17 @@ class AppShell extends StatelessWidget {
       appBar: appBar ?? (title == null ? null : AppBar(title: Text(title!), actions: actions)),
       body: body,
       extendBody: true,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF2CB89D),
-        foregroundColor: Colors.white,
-        shape: const CircleBorder(),
-        onPressed: () => _openQuickActions(context),
-        child: const Icon(Icons.add, size: 34),
-      ),
+      floatingActionButtonLocation: floatingActionButtonLocation ?? (showQuickActionButton ? FloatingActionButtonLocation.centerDocked : null),
+      floatingActionButton: showQuickActionButton
+          ? (floatingActionButton ??
+              FloatingActionButton(
+                backgroundColor: const Color(0xFF2CB89D),
+                foregroundColor: Colors.white,
+                shape: const CircleBorder(),
+                onPressed: () => _openQuickActions(context),
+                child: const Icon(Icons.add, size: 34),
+              ))
+          : floatingActionButton,
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         notchMargin: 8,

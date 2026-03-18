@@ -241,6 +241,7 @@ class _CreateDogScreenState extends ConsumerState<CreateDogScreen> {
           ),
         ],
       ),
+      showQuickActionButton: false,
       floatingActionButton: _error == null
           ? null
           : Padding(
