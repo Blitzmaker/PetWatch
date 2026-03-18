@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/app_shell.dart';
 import '../../core/providers.dart';
+import '../dogs/dog_calorie_helper.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -48,6 +49,50 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
+  Future<void> _editKcalTarget(Map<String, dynamic> dog) async {
+    final controller = TextEditingController(text: (dog['dailyKcalTarget'] as num?)?.round().toString() ?? '');
+    final result = await showDialog<int>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Kalorienbedarf anpassen'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: controller,
+              keyboardType: const TextInputType.numberWithOptions(decimal: false),
+              decoration: const InputDecoration(labelText: 'kcal pro Tag'),
+            ),
+            const SizedBox(height: 12),
+            const Text(calorieCalculatorDisclaimer, style: TextStyle(color: Color(0xFF6F7F8C))),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Abbrechen')),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, int.tryParse(controller.text.trim())),
+            child: const Text('Speichern'),
+          ),
+        ],
+      ),
+    );
+
+    if (result == null || result <= 0) return;
+
+    try {
+      await ref.read(apiClientProvider).dio.patch('/dogs/${dog['id']}', data: {'dailyKcalTarget': result});
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Kalorienbedarf gespeichert.')));
+      await _loadDogs();
+    } on DioException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.response?.data?.toString() ?? 'Kalorienbedarf konnte nicht gespeichert werden.')),
+      );
+    }
+  }
+
   Future<void> _logout() async {
     final api = ref.read(apiClientProvider).dio;
     try {
@@ -64,6 +109,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final activeDog = _dogs.cast<Map<String, dynamic>?>().firstWhere(
+          (dog) => dog?['id'] == _selectedDogId,
+          orElse: () => _dogs.isNotEmpty ? _dogs.first as Map<String, dynamic> : null,
+        );
+
     return AppShell(
       currentIndex: 3,
       title: 'Settings',
@@ -94,17 +144,26 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 const SizedBox(height: 8),
                 ElevatedButton(onPressed: _selectedDogId == null ? null : _saveDogSelection, child: const Text('Hund aktivieren')),
                 const SizedBox(height: 24),
+                const Text('Kalorienbedarf', style: TextStyle(fontFamily: 'SourGummy', fontSize: 22, fontWeight: FontWeight.w700)),
+                const SizedBox(height: 8),
+                if (activeDog != null)
+                  Card(
+                    child: ListTile(
+                      title: Text('${activeDog['name']} · ${(activeDog['dailyKcalTarget'] as num?)?.round() ?? 0} kcal/Tag'),
+                      subtitle: const Text(calorieCalculatorDisclaimer),
+                      trailing: const Icon(Icons.edit_outlined),
+                      onTap: () => _editKcalTarget(activeDog),
+                    ),
+                  )
+                else
+                  const Text('Lege zuerst einen Hund an, um den Kalorienbedarf anzupassen.'),
+                const SizedBox(height: 24),
                 const Text('Account', style: TextStyle(fontFamily: 'SourGummy', fontSize: 22, fontWeight: FontWeight.w700)),
                 const SizedBox(height: 8),
                 OutlinedButton.icon(
                   onPressed: _logout,
                   icon: const Icon(Icons.logout),
                   label: const Text('Ausloggen'),
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'Weitere Einstellungen folgen in einem nächsten Schritt.',
-                  style: TextStyle(color: Color(0xFF6F7F8C)),
                 ),
               ],
             ),

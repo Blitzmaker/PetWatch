@@ -19,8 +19,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   List<dynamic> _weights = [];
   List<dynamic> _meals = [];
 
-  static const double _dailyKcalTarget = 700;
-
   @override
   void initState() {
     super.initState();
@@ -122,6 +120,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       return eatenAt.year == now.year && eatenAt.month == now.month && eatenAt.day == now.day;
     }).length;
 
+    final dailyKcalTarget = ((_dog?['dailyKcalTarget'] as num?)?.toDouble() ?? 700).clamp(1, 100000).toDouble();
+
     final consumedKcal = _meals.fold<double>(0, (sum, meal) {
       final entries = (meal as Map<String, dynamic>)['entries'] as List<dynamic>? ?? [];
       final mealKcal = entries.fold<double>(0, (entrySum, entry) {
@@ -134,8 +134,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       return sum + mealKcal;
     });
 
-    final remainingKcal = (_dailyKcalTarget - consumedKcal).clamp(0.0, _dailyKcalTarget).toDouble();
-    final progress = (consumedKcal / _dailyKcalTarget).clamp(0, 1).toDouble();
+    final remainingKcal = (dailyKcalTarget - consumedKcal).clamp(0.0, dailyKcalTarget).toDouble();
+    final progress = (consumedKcal / dailyKcalTarget).clamp(0, 1).toDouble();
 
     final lastWeighingText = _weights.isEmpty
         ? 'Noch nie'
@@ -152,7 +152,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             children: [
               _HeaderCard(dogName: _dog?['name'] as String? ?? 'Hund', latestWeight: latestWeight?.toDouble(), targetWeight: targetWeight?.toDouble()),
               const SizedBox(height: 20),
-              Center(child: _CalorieRing(remainingKcal: remainingKcal, targetKcal: _dailyKcalTarget, progress: progress)),
+              Center(child: _CalorieRing(remainingKcal: remainingKcal, targetKcal: dailyKcalTarget, progress: progress)),
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
