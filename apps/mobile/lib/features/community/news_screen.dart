@@ -18,11 +18,6 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
     defaultValue: 'http://10.0.2.2:8055',
   );
   static const _directusToken = String.fromEnvironment('DIRECTUS_STATIC_TOKEN', defaultValue: '');
-  static const _communityCollection = String.fromEnvironment(
-    'DIRECTUS_COMMUNITY_COLLECTION',
-    defaultValue: 'cms_posts',
-  );
-
   late final Dio _dio;
 
   bool _loading = true;
@@ -49,7 +44,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
 
     try {
       final results = await Future.wait([
-        _loadPostsWithFallbackCollection(),
+        _loadPosts(),
         _loadCategories(),
       ]);
 
@@ -82,27 +77,13 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
     }
   }
 
-  Future<Response<dynamic>> _loadPostsWithFallbackCollection() async {
-    final candidateCollections = _candidateCollections();
-    DioException? lastError;
-
-    for (final collection in candidateCollections) {
-      try {
-        return await _dio.get('/items/$collection', queryParameters: {
-          'sort': '-published_at,-date_created',
-          'filter[status][_eq]': 'published',
-          'fields': 'id,title,excerpt,content,published_at,date_created,category,category.id,category.title,category.for_members,cms_category,cms_category.id,cms_category.title,cms_category.for_members',
-          'limit': 50,
-        });
-      } on DioException catch (e) {
-        lastError = e;
-        if (!_isForbiddenOrNotFound(e)) {
-          rethrow;
-        }
-      }
-    }
-
-    throw lastError ?? DioException(requestOptions: RequestOptions(path: '/items/${candidateCollections.first}'));
+  Future<Response<dynamic>> _loadPosts() {
+    return _dio.get('/items/cms_posts', queryParameters: {
+      'sort': '-published_at,-date_created',
+      'filter[status][_eq]': 'published',
+      'fields': 'id,title,excerpt,content,published_at,date_created,category,category.id,category.title,category.for_members,cms_category,cms_category.id,cms_category.title,cms_category.for_members',
+      'limit': 50,
+    });
   }
 
   Future<Response<dynamic>> _loadCategories() {
@@ -111,17 +92,6 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
       'fields': 'id,title,for_members',
       'limit': 100,
     });
-  }
-
-  List<String> _candidateCollections() {
-    final baseCollection = _communityCollection.trim().isEmpty ? 'cms_posts' : _communityCollection.trim();
-    if (baseCollection == 'cms_post') {
-      return const ['cms_post', 'cms_posts'];
-    }
-    if (baseCollection == 'cms_posts') {
-      return const ['cms_posts', 'cms_post'];
-    }
-    return [baseCollection];
   }
 
   bool _isForbiddenOrNotFound(DioException e) {
@@ -142,8 +112,8 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
     }
 
     if (_isForbiddenOrNotFound(e)) {
-      return 'Kein Zugriff auf die News-Collection. Prüfe in Directus die Leserechte für "${_candidateCollections().join(' / ')}" und "cms_category" '
-          'oder setze --dart-define=DIRECTUS_COMMUNITY_COLLECTION=<name>.${details != null ? '\n\nAntwort: $details' : ''}';
+      return 'Kein Zugriff auf die News-Collection. Prüfe in Directus die Leserechte für "cms_posts" und "cms_category".'
+          '${details != null ? '\n\nAntwort: $details' : ''}';
     }
 
     return details ?? 'News konnten nicht geladen werden. Prüfe DIRECTUS_BASE_URL und Berechtigungen.';
