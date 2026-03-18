@@ -241,6 +241,13 @@ class _CreateDogScreenState extends ConsumerState<CreateDogScreen> {
           ),
         ],
       ),
+      floatingActionButton: _error == null
+          ? null
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(_error!, style: const TextStyle(color: Colors.red)),
+            ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
