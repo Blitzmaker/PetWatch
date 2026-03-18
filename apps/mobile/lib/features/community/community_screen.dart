@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -23,9 +25,19 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
   bool _loading = true;
   bool _ready = false;
 
+  Uri? get _flarumUri => Uri.tryParse(_flarumBaseUrl);
+
+  bool get _usesBlockedCleartextOnAndroid =>
+      Platform.isAndroid && (_flarumUri?.scheme.toLowerCase() == 'http');
+
   @override
   void initState() {
     super.initState();
+    if (_usesBlockedCleartextOnAndroid) {
+      _loading = false;
+      _ready = false;
+      return;
+    }
     _initWebView();
   }
 
@@ -48,30 +60,42 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
     setState(() => _ready = true);
   }
 
+  Widget _buildConfigurationHint(String message) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Text(
+          message,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final body = _flarumBaseUrl.contains('example.com')
+        ? _buildConfigurationHint(
+            'Flarum ist noch nicht konfiguriert. Setze --dart-define=FLARUM_BASE_URL und optional FLARUM_SSO_PATH, damit Community-Inhalte inkl. SSO geladen werden.',
+          )
+        : _usesBlockedCleartextOnAndroid
+            ? _buildConfigurationHint(
+                'Die Community-URL verwendet http://. Android blockiert unverschlüsselte WebView-Verbindungen und zeigt sonst net::ERR_CLEARTEXT_NOT_PERMITTED. Bitte setze FLARUM_BASE_URL auf eine https://-URL.',
+              )
+            : Stack(
+                children: [
+                  if (_loading) const LinearProgressIndicator(minHeight: 2),
+                  Padding(
+                    padding: EdgeInsets.only(top: _loading ? 2 : 0),
+                    child: _ready ? WebViewWidget(controller: _controller) : const SizedBox.shrink(),
+                  ),
+                ],
+              );
+
     return AppShell(
       currentIndex: 2,
       title: 'Community',
-      body: _flarumBaseUrl.contains('example.com')
-          ? const Center(
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: Text(
-                  'Flarum ist noch nicht konfiguriert. Setze --dart-define=FLARUM_BASE_URL und optional FLARUM_SSO_PATH, damit Community-Inhalte inkl. SSO geladen werden.',
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            )
-          : Stack(
-              children: [
-                if (_loading) const LinearProgressIndicator(minHeight: 2),
-                Padding(
-                  padding: EdgeInsets.only(top: _loading ? 2 : 0),
-                  child: _ready ? WebViewWidget(controller: _controller) : const SizedBox.shrink(),
-                ),
-              ],
-            ),
+      body: body,
     );
   }
 }
