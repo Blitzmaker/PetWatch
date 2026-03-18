@@ -23,6 +23,7 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
   String? _error;
   bool _isLoading = true;
   String? _deletingId;
+  int? _selectedChartIndex;
 
   @override
   void initState() {
@@ -51,6 +52,7 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
         _weights = response.data as List<dynamic>;
         _error = null;
         _isLoading = false;
+        _selectedChartIndex = null;
       });
     } on DioException catch (e) {
       setState(() {
@@ -123,6 +125,16 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
     return double.tryParse(value?.toString() ?? '') ?? 0;
   }
 
+  double? _weightDifferenceToPrevious(List<Map<String, dynamic>> chartEntries, int index) {
+    if (index <= 0 || index >= chartEntries.length) return null;
+    return _weightValue(chartEntries[index]) - _weightValue(chartEntries[index - 1]);
+  }
+
+  String _formatWeightDifference(double difference) {
+    final sign = difference > 0 ? '+' : '';
+    return '$sign${difference.toStringAsFixed(1)} kg';
+  }
+
   Widget _buildChartCard(List<Map<String, dynamic>> entries) {
     final chartEntries = entries.take(10).toList().reversed.toList();
     final weights = chartEntries.map(_weightValue).toList();
@@ -136,6 +148,13 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
     final spots = <FlSpot>[
       for (var i = 0; i < chartEntries.length; i++) FlSpot(i.toDouble(), _weightValue(chartEntries[i])),
     ];
+    final selectedIndex = _selectedChartIndex != null && _selectedChartIndex! < chartEntries.length
+        ? _selectedChartIndex
+        : null;
+    final selectedEntry = selectedIndex != null ? chartEntries[selectedIndex] : null;
+    final selectedDifference = selectedIndex != null
+        ? _weightDifferenceToPrevious(chartEntries, selectedIndex)
+        : null;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -246,11 +265,31 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
                 ),
                 lineTouchData: LineTouchData(
                   handleBuiltInTouches: true,
+                  touchCallback: (event, response) {
+                    final touchedSpots = response?.lineBarSpots;
+                    final spot = (touchedSpots == null || touchedSpots.isEmpty) ? null : touchedSpots.first;
+                    if (!event.isInterestedForInteractions || spot == null) {
+                      if (_selectedChartIndex != null) {
+                        setState(() => _selectedChartIndex = null);
+                      }
+                      return;
+                    }
+
+                    final index = spot.x.toInt();
+                    if (_selectedChartIndex != index) {
+                      setState(() => _selectedChartIndex = index);
+                    }
+                  },
                   touchTooltipData: LineTouchTooltipData(
                     getTooltipItems: (spots) => spots.map((spot) {
-                      final entry = chartEntries[spot.x.toInt()];
+                      final index = spot.x.toInt();
+                      final entry = chartEntries[index];
+                      final difference = _weightDifferenceToPrevious(chartEntries, index);
+                      final differenceText = difference == null
+                          ? 'Keine Vorwiegung'
+                          : 'Differenz: ${_formatWeightDifference(difference)}';
                       return LineTooltipItem(
-                        '${_weightValue(entry).toStringAsFixed(1)} kg\n${_formatDate(entry['date'])}',
+                        '${_weightValue(entry).toStringAsFixed(1)} kg\n${_formatDate(entry['date'])}\n$differenceText',
                         const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
                       );
                     }).toList(),
@@ -287,6 +326,50 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
               ),
             ),
           ),
+          if (selectedEntry != null) ...[
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF7FFFC),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: const Color(0x332CB89D)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Ausgewählte Wiegung: ${_weightValue(selectedEntry).toStringAsFixed(1)} kg',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: Color(0xFF11332C),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    _formatDate(selectedEntry['date']),
+                    style: TextStyle(color: Colors.blueGrey.shade700),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    selectedDifference == null
+                        ? 'Differenz zur Vorwiegung: keine Vorwiegung vorhanden'
+                        : 'Differenz zur Vorwiegung: ${_formatWeightDifference(selectedDifference)}',
+                    style: TextStyle(
+                      color: selectedDifference != null && selectedDifference < 0
+                          ? const Color(0xFF1B7A52)
+                          : selectedDifference != null && selectedDifference > 0
+                              ? const Color(0xFF9C4A1A)
+                              : Colors.blueGrey.shade700,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
