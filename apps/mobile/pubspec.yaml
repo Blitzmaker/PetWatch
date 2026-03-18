@@ -15,6 +15,8 @@ dependencies:
   mobile_scanner: ^5.2.3
   webview_flutter: ^4.8.0
   advanced_searchable_dropdown: ^2.1.0
+  fl_chart: ^0.69.0
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
