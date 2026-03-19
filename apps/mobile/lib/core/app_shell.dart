@@ -106,6 +106,14 @@ class AppShell extends StatelessWidget {
                   Navigator.pushNamed(context, '/meals/create');
                 },
               ),
+              ListTile(
+                leading: const Icon(Icons.menu_book),
+                title: const Text('Rezept erstellen'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  Navigator.pushNamed(context, '/recipes/create');
+                },
+              ),
             ],
           ),
         ),

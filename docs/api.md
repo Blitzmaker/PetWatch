@@ -29,8 +29,16 @@ Authenticated endpoints require `Authorization: Bearer <accessToken>`.
 ## Meals
 - GET `/dogs/:dogId/meals`
 - POST `/dogs/:dogId/meals`
+- POST `/dogs/:dogId/meals/from-recipe`
 - GET `/meals/:id`
 - DELETE `/meals/:id`
+
+## Recipes
+- GET `/recipes`
+- POST `/recipes`
+- GET `/recipes/:id`
+- PATCH `/recipes/:id`
+- DELETE `/recipes/:id`
 
 ## Admin
 - GET `/admin/users`

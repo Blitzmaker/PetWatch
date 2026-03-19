@@ -14,6 +14,9 @@ import '../features/foods/barcode_scan_screen.dart';
 import '../features/foods/food_create_screen.dart';
 import '../features/meals/meal_create_screen.dart';
 import '../features/meals/meals_list_screen.dart';
+import '../features/recipes/recipe_create_screen.dart';
+import '../features/recipes/recipe_detail_screen.dart';
+import '../features/recipes/recipes_list_screen.dart';
 
 class DogWatchApp extends StatelessWidget {
   const DogWatchApp({super.key});
@@ -49,6 +52,9 @@ class DogWatchApp extends StatelessWidget {
         '/foods/create': (_) => const FoodCreateScreen(),
         '/meals/create': (_) => const MealCreateScreen(),
         '/meals': (_) => const MealsListScreen(),
+        '/recipes': (_) => const RecipesListScreen(),
+        '/recipes/create': (_) => const RecipeCreateScreen(),
+        '/recipes/detail': (_) => const RecipeDetailScreen(),
         '/activities/create': (_) => const AddActivityScreen(),
       },
     );
