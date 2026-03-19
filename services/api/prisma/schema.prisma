@@ -42,6 +42,10 @@ enum FoodStatus {
   REJECTED
 }
 
+enum RecipeVisibility {
+  PRIVATE
+}
+
 enum PublicationStatus {
   DRAFT
   PUBLISHED
@@ -61,6 +65,7 @@ model User {
   dogs           Dog[]
   foodsCreated   Food[]            @relation("FoodsCreatedBy")
   foodsReviewed  Food[]            @relation("FoodsReviewedBy")
+  recipes        Recipe[]
   refreshTokens  RefreshToken[]
   cmsPosts       CmsPost[]
   threads        CommunityThread[]
@@ -136,6 +141,53 @@ model Food {
   createdBy   User?       @relation("FoodsCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
   reviewedBy  User?       @relation("FoodsReviewedBy", fields: [reviewedByAdminId], references: [id], onDelete: SetNull)
   mealEntries MealEntry[]
+  recipeItems RecipeItem[]
+}
+
+
+model Recipe {
+  id                String           @id @default(cuid())
+  createdByUserId   String
+  title             String
+  description       String?
+  visibility        RecipeVisibility @default(PRIVATE)
+  defaultPortions   Float?
+  yieldTotalGrams   Float
+  notes             String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  createdBy User         @relation(fields: [createdByUserId], references: [id], onDelete: Cascade)
+  items     RecipeItem[]
+  steps     RecipeStep[]
+
+  @@index([createdByUserId, createdAt])
+}
+
+model RecipeItem {
+  id        String  @id @default(cuid())
+  recipeId  String
+  foodId    String
+  grams     Float
+  sortOrder Int
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  food   Food   @relation(fields: [foodId], references: [id], onDelete: Restrict)
+
+  @@index([recipeId, sortOrder])
+  @@index([foodId])
+}
+
+model RecipeStep {
+  id          String  @id @default(cuid())
+  recipeId    String
+  sortOrder   Int
+  title       String?
+  instruction String
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([recipeId, sortOrder])
 }
 
 model CmsCategory {
@@ -227,15 +279,18 @@ model Meal {
 }
 
 model MealEntry {
-  id       String   @id @default(cuid())
-  mealId   String
-  foodId   String
-  grams    Float
-  mealType MealType @default(DINNER)
+  id                        String   @id @default(cuid())
+  mealId                    String
+  foodId                    String
+  grams                     Float
+  mealType                  MealType @default(DINNER)
+  sourceRecipeId            String?
+  sourceRecipeTitleSnapshot String?
 
   meal Meal @relation(fields: [mealId], references: [id], onDelete: Cascade)
   food Food @relation(fields: [foodId], references: [id], onDelete: Restrict)
 
   @@index([mealId])
   @@index([foodId])
+  @@index([sourceRecipeId])
 }

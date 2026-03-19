@@ -434,6 +434,7 @@ class _MealsListScreenState extends ConsumerState<MealsListScreen> {
           final mealEntries = (meal['entries'] as List<dynamic>? ?? []).cast<Map<String, dynamic>>();
           final totals = _calculateTotals([meal]);
           final mealType = mealEntries.isNotEmpty ? _mealTypeLabel(mealEntries.first['mealType'] as String?) : 'Mahlzeit';
+          final recipeSourceTitle = mealEntries.isNotEmpty ? mealEntries.first['sourceRecipeTitleSnapshot'] as String? : null;
           final foods = mealEntries
               .map((entry) => ((entry['food'] as Map<String, dynamic>?)?['name'] as String?) ?? 'Unbekanntes Futter')
               .join(', ');
@@ -481,6 +482,10 @@ class _MealsListScreenState extends ConsumerState<MealsListScreen> {
                         children: [
                           Text(_formatDateTime(meal['eatenAt'])),
                           const SizedBox(height: 4),
+                          if (recipeSourceTitle != null) ...[
+                            Text('Rezept: $recipeSourceTitle', style: const TextStyle(fontWeight: FontWeight.w600)),
+                            const SizedBox(height: 4),
+                          ],
                           Text(
                             foods,
                             maxLines: 2,
