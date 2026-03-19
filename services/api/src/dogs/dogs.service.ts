@@ -45,7 +45,13 @@ export class DogsService {
   }
 
   async findOne(userId: string, id: string) {
-    const dog = await this.prisma.dog.findFirst({ where: { id, userId }, include: { weights: true, meals: { include: { entries: true } } } });
+    const dog = await this.prisma.dog.findFirst({
+      where: { id, userId },
+      include: {
+        weights: { orderBy: [{ date: 'desc' }, { createdAt: 'desc' }] },
+        meals: { include: { entries: true } },
+      },
+    });
     if (!dog) throw new NotFoundException('Dog not found');
     return dog;
   }

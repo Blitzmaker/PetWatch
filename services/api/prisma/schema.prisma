@@ -100,8 +100,9 @@ model Dog {
   updatedAt DateTime @updatedAt
 
   user    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  weights WeightEntry[]
-  meals   Meal[]
+  weights    WeightEntry[]
+  meals      Meal[]
+  activities ActivityEntry[]
 
   @@index([userId])
 }
@@ -117,6 +118,34 @@ model WeightEntry {
   dog Dog @relation(fields: [dogId], references: [id], onDelete: Cascade)
 
   @@index([dogId, date])
+}
+
+model Activity {
+  id            String          @id @default(cuid())
+  name          String          @unique
+  kcalPerMinute Float
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  entries ActivityEntry[]
+}
+
+model ActivityEntry {
+  id                    String   @id @default(cuid())
+  dogId                 String
+  activityId            String
+  durationMinutes       Int
+  performedAt           DateTime
+  kcalPerMinuteSnapshot Float
+  kcalMultiplier        Float
+  kcalBurned            Float
+  createdAt             DateTime @default(now())
+
+  dog      Dog      @relation(fields: [dogId], references: [id], onDelete: Cascade)
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Restrict)
+
+  @@index([dogId, performedAt])
+  @@index([activityId])
 }
 
 model Food {
