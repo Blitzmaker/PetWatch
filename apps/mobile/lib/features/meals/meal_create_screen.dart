@@ -399,7 +399,11 @@ class _MealCreateScreenState extends ConsumerState<MealCreateScreen> {
                   child: Text('Noch keine Rezepte geladen. Lege zuerst ein Rezept an.'),
                 ),
               DropdownButtonFormField<String>(
-                value: _recipes.any((recipe) => recipe['id'] == _selectedRecipe?['id']) ? _selectedRecipe?['id'] as String? : null,
+                value: (() {
+                  final selectedRecipeId = _selectedRecipe?['id'] as String?;
+                  if (selectedRecipeId == null) return null;
+                  return _recipes.any((recipe) => recipe['id'] == selectedRecipeId) ? selectedRecipeId : null;
+                })(),
                 items: _recipes
                     .map((recipe) => DropdownMenuItem<String>(
                           value: recipe['id'] as String,
