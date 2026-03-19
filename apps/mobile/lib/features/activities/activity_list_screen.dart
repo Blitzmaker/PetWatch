@@ -149,8 +149,8 @@ class _ActivityListScreenState extends ConsumerState<ActivityListScreen> {
   Widget _buildChartCard(List<Map<String, dynamic>> entries) {
     final chartEntries = _buildLast7Days(entries);
     final maxKcal = chartEntries.fold<double>(0, (maxValue, entry) => math.max(maxValue, entry.kcalBurned));
-    final maxY = math.max(80, (maxKcal * 1.25).ceilToDouble());
-    final yInterval = math.max(20, (maxY / 4).ceilToDouble());
+    final maxY = math.max(80.0, (maxKcal * 1.25).ceilToDouble());
+    final yInterval = math.max(20.0, (maxY / 4).ceilToDouble());
     final selectedIndex = _selectedChartIndex != null && _selectedChartIndex! < chartEntries.length
         ? _selectedChartIndex
         : null;
