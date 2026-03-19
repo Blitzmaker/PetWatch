@@ -113,16 +113,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
     final latestWeight = _weights.isNotEmpty ? (_weights.first as Map<String, dynamic>)['weightKg'] as num : null;
     final targetWeight = _dog?['targetWeightKg'] as num?;
-    final mealsToday = _meals.where((meal) {
+    final mealsTodayEntries = _meals.where((meal) {
       final eatenAt = DateTime.tryParse((meal as Map<String, dynamic>)['eatenAt'] as String? ?? '');
       if (eatenAt == null) return false;
       final now = DateTime.now();
       return eatenAt.year == now.year && eatenAt.month == now.month && eatenAt.day == now.day;
-    }).length;
+    }).toList();
+    final mealsToday = mealsTodayEntries.length;
 
     final dailyKcalTarget = ((_dog?['dailyKcalTarget'] as num?)?.toDouble() ?? 700).clamp(1, 100000).toDouble();
 
-    final consumedKcal = _meals.fold<double>(0, (sum, meal) {
+    final consumedKcal = mealsTodayEntries.fold<double>(0, (sum, meal) {
       final entries = (meal as Map<String, dynamic>)['entries'] as List<dynamic>? ?? [];
       final mealKcal = entries.fold<double>(0, (entrySum, entry) {
         final map = entry as Map<String, dynamic>;
