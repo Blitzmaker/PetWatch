@@ -1,0 +1,131 @@
+barcode,name,category,brand,kcalPer100g,proteinPercent,fatPercent,carbsPer100g,fiberPer100g,crudeAshPercent,crudeFiberPercent,source
+PW-FOOD-APFEL,Apfel,Obst,USDA / FoodData Central,52,0.3,0.2,13.8,2.4,,,USDA FoodData Central
+PW-FOOD-BANANE,Banane,Obst,USDA / FoodData Central,89,1.1,0.3,22.8,2.6,,,USDA FoodData Central
+PW-FOOD-BIRNE,Birne,Obst,USDA / FoodData Central,57,0.4,0.1,15.2,3.1,,,USDA FoodData Central
+PW-FOOD-ORANGE,Orange,Obst,USDA / FoodData Central,47,0.9,0.1,11.8,2.4,,,USDA FoodData Central
+PW-FOOD-MANDARINE,Mandarine,Obst,USDA / FoodData Central,53,0.8,0.3,13.3,1.8,,,USDA FoodData Central
+PW-FOOD-ZITRONE,Zitrone,Obst,USDA / FoodData Central,29,1.1,0.3,9.3,2.8,,,USDA FoodData Central
+PW-FOOD-LIMETTE,Limette,Obst,USDA / FoodData Central,30,0.7,0.2,10.5,2.8,,,USDA FoodData Central
+PW-FOOD-GRAPEFRUIT,Grapefruit,Obst,USDA / FoodData Central,42,0.8,0.1,10.7,1.6,,,USDA FoodData Central
+PW-FOOD-TRAUBENROT,Trauben rot,Obst,USDA / FoodData Central,69,0.7,0.2,18.1,0.9,,,USDA FoodData Central
+PW-FOOD-TRAUBENGRÜN,Trauben grün,Obst,USDA / FoodData Central,69,0.7,0.2,18.1,0.9,,,USDA FoodData Central
+PW-FOOD-ERDBEERE,Erdbeere,Obst,USDA / FoodData Central,32,0.7,0.3,7.7,2.0,,,USDA FoodData Central
+PW-FOOD-HEIDELBEERE,Heidelbeere,Obst,USDA / FoodData Central,57,0.7,0.3,14.5,2.4,,,USDA FoodData Central
+PW-FOOD-HIMBEERE,Himbeere,Obst,USDA / FoodData Central,52,1.2,0.7,11.9,6.5,,,USDA FoodData Central
+PW-FOOD-BROMBEERE,Brombeere,Obst,USDA / FoodData Central,43,1.4,0.5,9.6,5.3,,,USDA FoodData Central
+PW-FOOD-JOHANNISBEEREROT,Johannisbeere rot,Obst,USDA / FoodData Central,56,1.4,0.2,13.8,4.3,,,USDA FoodData Central
+PW-FOOD-JOHANNISBEERESCHWARZ,Johannisbeere schwarz,Obst,USDA / FoodData Central,63,1.4,0.4,15.4,4.3,,,USDA FoodData Central
+PW-FOOD-KIRSCHESÜSS,Kirsche süß,Obst,USDA / FoodData Central,63,1.1,0.2,16.0,2.1,,,USDA FoodData Central
+PW-FOOD-SAUERKIRSCHE,Sauerkirsche,Obst,USDA / FoodData Central,50,1.0,0.3,12.2,1.6,,,USDA FoodData Central
+PW-FOOD-PFIRSICH,Pfirsich,Obst,USDA / FoodData Central,39,0.9,0.3,9.5,1.5,,,USDA FoodData Central
+PW-FOOD-NEKTARINE,Nektarine,Obst,USDA / FoodData Central,44,1.1,0.3,10.6,1.7,,,USDA FoodData Central
+PW-FOOD-APRIKOSE,Aprikose,Obst,USDA / FoodData Central,48,1.4,0.4,11.1,2.0,,,USDA FoodData Central
+PW-FOOD-PFLAUME,Pflaume,Obst,USDA / FoodData Central,46,0.7,0.3,11.4,1.4,,,USDA FoodData Central
+PW-FOOD-MIRABELLE,Mirabelle,Obst,USDA / FoodData Central,63,0.8,0.2,15.0,1.7,,,USDA FoodData Central
+PW-FOOD-MANGO,Mango,Obst,USDA / FoodData Central,60,0.8,0.4,15.0,1.6,,,USDA FoodData Central
+PW-FOOD-ANANAS,Ananas,Obst,USDA / FoodData Central,50,0.5,0.1,13.1,1.4,,,USDA FoodData Central
+PW-FOOD-KIWI,Kiwi,Obst,USDA / FoodData Central,61,1.1,0.5,14.7,3.0,,,USDA FoodData Central
+PW-FOOD-GRANATAPFEL,Granatapfel,Obst,USDA / FoodData Central,83,1.7,1.2,18.7,4.0,,,USDA FoodData Central
+PW-FOOD-WASSERMELONE,Wassermelone,Obst,USDA / FoodData Central,30,0.6,0.2,7.6,0.4,,,USDA FoodData Central
+PW-FOOD-HONIGMELONE,Honigmelone,Obst,USDA / FoodData Central,36,0.5,0.1,9.1,0.8,,,USDA FoodData Central
+PW-FOOD-CANTALOUPEMELONE,Cantaloupe-Melone,Obst,USDA / FoodData Central,34,0.8,0.2,8.2,0.9,,,USDA FoodData Central
+PW-FOOD-PAPAYA,Papaya,Obst,USDA / FoodData Central,43,0.5,0.3,10.8,1.7,,,USDA FoodData Central
+PW-FOOD-PASSIONSFRUCHT,Passionsfrucht,Obst,USDA / FoodData Central,97,2.2,0.7,23.4,10.4,,,USDA FoodData Central
+PW-FOOD-FEIGEFRISCH,Feige frisch,Obst,USDA / FoodData Central,74,0.8,0.3,19.2,2.9,,,USDA FoodData Central
+PW-FOOD-DATTELFRISCH,Dattel frisch,Obst,USDA / FoodData Central,142,1.8,0.2,37.0,3.5,,,USDA FoodData Central
+PW-FOOD-AVOCADO,Avocado,Obst,USDA / FoodData Central,160,2.0,14.7,8.5,6.7,,,USDA FoodData Central
+PW-FOOD-CRANBERRY,Cranberry,Obst,USDA / FoodData Central,46,0.4,0.1,12.2,4.6,,,USDA FoodData Central
+PW-FOOD-GUAVE,Guave,Obst,USDA / FoodData Central,68,2.6,1.0,14.3,5.4,,,USDA FoodData Central
+PW-FOOD-KAKI,Kaki,Obst,USDA / FoodData Central,70,0.6,0.2,18.6,3.6,,,USDA FoodData Central
+PW-FOOD-LITSCHI,Litschi,Obst,USDA / FoodData Central,66,0.8,0.4,16.5,1.3,,,USDA FoodData Central
+PW-FOOD-QUITTE,Quitte,Obst,USDA / FoodData Central,57,0.4,0.1,15.3,1.9,,,USDA FoodData Central
+PW-FOOD-KAROTTE,Karotte,Gemüse,USDA / FoodData Central,41,0.9,0.2,9.6,2.8,,,USDA FoodData Central
+PW-FOOD-BROKKOLI,Brokkoli,Gemüse,USDA / FoodData Central,34,2.8,0.4,6.6,2.6,,,USDA FoodData Central
+PW-FOOD-BLUMENKOHL,Blumenkohl,Gemüse,USDA / FoodData Central,25,1.9,0.3,5.0,2.0,,,USDA FoodData Central
+PW-FOOD-ROSENKOHL,Rosenkohl,Gemüse,USDA / FoodData Central,43,3.4,0.3,9.0,3.8,,,USDA FoodData Central
+PW-FOOD-WEISSKOHL,Weißkohl,Gemüse,USDA / FoodData Central,25,1.3,0.1,5.8,2.5,,,USDA FoodData Central
+PW-FOOD-ROTKOHL,Rotkohl,Gemüse,USDA / FoodData Central,31,1.4,0.2,7.4,2.1,,,USDA FoodData Central
+PW-FOOD-WIRSING,Wirsing,Gemüse,USDA / FoodData Central,28,2.0,0.1,6.1,3.1,,,USDA FoodData Central
+PW-FOOD-GRÜNKOHL,Grünkohl,Gemüse,USDA / FoodData Central,49,4.3,0.9,8.8,3.6,,,USDA FoodData Central
+PW-FOOD-SPINAT,Spinat,Gemüse,USDA / FoodData Central,23,2.9,0.4,3.6,2.2,,,USDA FoodData Central
+PW-FOOD-MANGOLD,Mangold,Gemüse,USDA / FoodData Central,19,1.8,0.2,3.7,1.6,,,USDA FoodData Central
+PW-FOOD-RUCOLA,Rucola,Gemüse,USDA / FoodData Central,25,2.6,0.7,3.7,1.6,,,USDA FoodData Central
+PW-FOOD-FELDSALAT,Feldsalat,Gemüse,USDA / FoodData Central,21,2.0,0.4,3.6,1.9,,,USDA FoodData Central
+PW-FOOD-KOPFSALAT,Kopfsalat,Gemüse,USDA / FoodData Central,15,1.4,0.2,2.9,1.3,,,USDA FoodData Central
+PW-FOOD-EISBERGSALAT,Eisbergsalat,Gemüse,USDA / FoodData Central,14,0.9,0.1,3.0,1.2,,,USDA FoodData Central
+PW-FOOD-ROMANASALAT,Romanasalat,Gemüse,USDA / FoodData Central,17,1.2,0.3,3.3,2.1,,,USDA FoodData Central
+PW-FOOD-GURKE,Gurke,Gemüse,USDA / FoodData Central,15,0.7,0.1,3.6,0.5,,,USDA FoodData Central
+PW-FOOD-TOMATE,Tomate,Gemüse,USDA / FoodData Central,18,0.9,0.2,3.9,1.2,,,USDA FoodData Central
+PW-FOOD-PAPRIKAROT,Paprika rot,Gemüse,USDA / FoodData Central,31,1.0,0.3,6.0,2.1,,,USDA FoodData Central
+PW-FOOD-PAPRIKAGELB,Paprika gelb,Gemüse,USDA / FoodData Central,27,1.0,0.2,6.3,0.9,,,USDA FoodData Central
+PW-FOOD-PAPRIKAGRÜN,Paprika grün,Gemüse,USDA / FoodData Central,20,0.9,0.2,4.6,1.7,,,USDA FoodData Central
+PW-FOOD-ZUCCHINI,Zucchini,Gemüse,USDA / FoodData Central,17,1.2,0.3,3.1,1.0,,,USDA FoodData Central
+PW-FOOD-AUBERGINE,Aubergine,Gemüse,USDA / FoodData Central,25,1.0,0.2,5.9,3.0,,,USDA FoodData Central
+PW-FOOD-KÜRBISHOKKAIDO,Kürbis Hokkaido,Gemüse,USDA / FoodData Central,63,1.7,0.6,12.6,2.8,,,USDA FoodData Central
+PW-FOOD-KÜRBISBUTTERNUT,Kürbis Butternut,Gemüse,USDA / FoodData Central,45,1.0,0.1,11.7,2.0,,,USDA FoodData Central
+PW-FOOD-KARTOFFEL,Kartoffel,Gemüse,USDA / FoodData Central,77,2.0,0.1,17.6,2.2,,,USDA FoodData Central
+PW-FOOD-SÜSSKARTOFFEL,Süßkartoffel,Gemüse,USDA / FoodData Central,86,1.6,0.1,20.1,3.0,,,USDA FoodData Central
+PW-FOOD-PASTINAKE,Pastinake,Gemüse,USDA / FoodData Central,75,1.2,0.3,18.0,4.9,,,USDA FoodData Central
+PW-FOOD-SELLERIEKNOLLE,Sellerieknolle,Gemüse,USDA / FoodData Central,42,1.5,0.3,9.2,1.8,,,USDA FoodData Central
+PW-FOOD-STANGENSELLERIE,Stangensellerie,Gemüse,USDA / FoodData Central,16,0.7,0.2,3.0,1.6,,,USDA FoodData Central
+PW-FOOD-ROTEBETE,Rote Bete,Gemüse,USDA / FoodData Central,43,1.6,0.2,9.6,2.8,,,USDA FoodData Central
+PW-FOOD-RETTICH,Rettich,Gemüse,USDA / FoodData Central,16,0.7,0.1,3.4,1.6,,,USDA FoodData Central
+PW-FOOD-RADIESCHEN,Radieschen,Gemüse,USDA / FoodData Central,16,0.7,0.1,3.4,1.6,,,USDA FoodData Central
+PW-FOOD-FENCHEL,Fenchel,Gemüse,USDA / FoodData Central,31,1.2,0.2,7.3,3.1,,,USDA FoodData Central
+PW-FOOD-LAUCH,Lauch,Gemüse,USDA / FoodData Central,61,1.5,0.3,14.2,1.8,,,USDA FoodData Central
+PW-FOOD-FRÜHLINGSZWIEBEL,Frühlingszwiebel,Gemüse,USDA / FoodData Central,32,1.8,0.2,7.3,2.6,,,USDA FoodData Central
+PW-FOOD-ZWIEBEL,Zwiebel,Gemüse,USDA / FoodData Central,40,1.1,0.1,9.3,1.7,,,USDA FoodData Central
+PW-FOOD-KNOBLAUCH,Knoblauch,Gemüse,USDA / FoodData Central,149,6.4,0.5,33.1,2.1,,,USDA FoodData Central
+PW-FOOD-ERBSENGRÜN,Erbsen grün,Gemüse,USDA / FoodData Central,81,5.4,0.4,14.5,5.1,,,USDA FoodData Central
+PW-FOOD-GRÜNEBOHNEN,Grüne Bohnen,Gemüse,USDA / FoodData Central,31,1.8,0.1,7.0,3.4,,,USDA FoodData Central
+PW-FOOD-DICKEBOHNEN,Dicke Bohnen,Gemüse,USDA / FoodData Central,88,7.6,0.7,17.6,5.4,,,USDA FoodData Central
+PW-FOOD-ZUCKERSCHOTEN,Zuckerschoten,Gemüse,USDA / FoodData Central,42,2.8,0.2,7.5,2.6,,,USDA FoodData Central
+PW-FOOD-MAIS,Mais,Gemüse,USDA / FoodData Central,86,3.3,1.4,19.0,2.7,,,USDA FoodData Central
+PW-FOOD-CHAMPIGNONS,Champignons,Gemüse,USDA / FoodData Central,22,3.1,0.3,3.3,1.0,,,USDA FoodData Central
+PW-FOOD-STEINPILZE,Steinpilze,Gemüse,USDA / FoodData Central,31,3.1,0.3,6.1,2.5,,,USDA FoodData Central
+PW-FOOD-SHIITAKE,Shiitake,Gemüse,USDA / FoodData Central,34,2.2,0.5,6.8,2.5,,,USDA FoodData Central
+PW-FOOD-SPARGELWEISS,Spargel weiß,Gemüse,USDA / FoodData Central,20,2.2,0.1,3.9,2.1,,,USDA FoodData Central
+PW-FOOD-SPARGELGRÜN,Spargel grün,Gemüse,USDA / FoodData Central,20,2.2,0.1,3.9,2.1,,,USDA FoodData Central
+PW-FOOD-ARTISCHOCKE,Artischocke,Gemüse,USDA / FoodData Central,47,3.3,0.2,10.5,5.4,,,USDA FoodData Central
+PW-FOOD-OKRA,Okra,Gemüse,USDA / FoodData Central,33,1.9,0.2,7.5,3.2,,,USDA FoodData Central
+PW-FOOD-PAKCHOI,Pak Choi,Gemüse,USDA / FoodData Central,13,1.5,0.2,2.2,1.0,,,USDA FoodData Central
+PW-FOOD-CHINAKOHL,Chinakohl,Gemüse,USDA / FoodData Central,16,1.2,0.2,3.2,1.2,,,USDA FoodData Central
+PW-FOOD-MEERRETTICH,Meerrettich,Gemüse,USDA / FoodData Central,48,1.2,0.7,11.3,3.3,,,USDA FoodData Central
+PW-FOOD-KOHLRABI,Kohlrabi,Gemüse,USDA / FoodData Central,27,1.7,0.1,6.2,3.6,,,USDA FoodData Central
+PW-FOOD-RHABARBER,Rhabarber,Gemüse,USDA / FoodData Central,21,0.9,0.2,4.5,1.8,,,USDA FoodData Central
+PW-FOOD-CASSAVA,Cassava,Gemüse,USDA / FoodData Central,160,1.4,0.3,38.1,1.8,,,USDA FoodData Central
+PW-FOOD-HÄHNCHENBRUST,Hähnchenbrust,Fleisch,USDA / FoodData Central,120,22.5,2.6,0.0,0.0,1.2,,USDA FoodData Central
+PW-FOOD-HÄHNCHENSCHENKELOHNEHAUT,Hähnchenschenkel ohne Haut,Fleisch,USDA / FoodData Central,177,20.0,10.9,0.0,0.0,1.1,,USDA FoodData Central
+PW-FOOD-HÄHNCHENFLÜGEL,Hähnchenflügel,Fleisch,USDA / FoodData Central,203,17.4,14.4,0.0,0.0,1.0,,USDA FoodData Central
+PW-FOOD-PUTENBRUST,Putenbrust,Fleisch,USDA / FoodData Central,135,29.0,1.6,0.0,0.0,1.0,,USDA FoodData Central
+PW-FOOD-PUTENOBERKEULE,Putenoberkeule,Fleisch,USDA / FoodData Central,144,21.0,6.1,0.0,0.0,1.0,,USDA FoodData Central
+PW-FOOD-ENTENBRUSTOHNEHAUT,Entenbrust ohne Haut,Fleisch,USDA / FoodData Central,140,23.6,4.5,0.0,0.0,1.1,,USDA FoodData Central
+PW-FOOD-GÄNSEBRUST,Gänsebrust,Fleisch,USDA / FoodData Central,161,22.8,7.1,0.0,0.0,1.1,,USDA FoodData Central
+PW-FOOD-RINDERFILET,Rinderfilet,Fleisch,USDA / FoodData Central,121,21.8,3.4,0.0,0.0,1.1,,USDA FoodData Central
+PW-FOOD-RINDERHÜFTE,Rinderhüfte,Fleisch,USDA / FoodData Central,130,21.6,4.6,0.0,0.0,1.1,,USDA FoodData Central
+PW-FOOD-RINDERHACK5FETT,Rinderhack 5% Fett,Fleisch,USDA / FoodData Central,137,21.4,5.0,0.0,0.0,1.0,,USDA FoodData Central
+PW-FOOD-RINDERHACK10FETT,Rinderhack 10% Fett,Fleisch,USDA / FoodData Central,176,20.0,10.0,0.0,0.0,1.0,,USDA FoodData Central
+PW-FOOD-RINDERHACK20FETT,Rinderhack 20% Fett,Fleisch,USDA / FoodData Central,254,17.2,20.0,0.0,0.0,0.9,,USDA FoodData Central
+PW-FOOD-RUMPSTEAK,Rumpsteak,Fleisch,USDA / FoodData Central,182,24.0,9.0,0.0,0.0,1.1,,USDA FoodData Central
+PW-FOOD-RIBEYESTEAK,Rib-Eye-Steak,Fleisch,USDA / FoodData Central,291,24.8,21.0,0.0,0.0,1.0,,USDA FoodData Central
+PW-FOOD-TAFELSPITZ,Tafelspitz,Fleisch,USDA / FoodData Central,191,28.0,8.0,0.0,0.0,1.1,,USDA FoodData Central
+PW-FOOD-RINDERLEBER,Rinderleber,Fleisch,USDA / FoodData Central,135,20.4,3.6,3.9,0.0,1.3,,USDA FoodData Central
+PW-FOOD-KALBSFILET,Kalbsfilet,Fleisch,USDA / FoodData Central,112,21.0,2.8,0.0,0.0,1.1,,USDA FoodData Central
+PW-FOOD-KALBSSCHNITZEL,Kalbsschnitzel,Fleisch,USDA / FoodData Central,114,21.3,2.7,0.0,0.0,1.0,,USDA FoodData Central
+PW-FOOD-SCHWEINEFILET,Schweinefilet,Fleisch,USDA / FoodData Central,143,21.0,6.0,0.0,0.0,1.1,,USDA FoodData Central
+PW-FOOD-SCHWEINELENDE,Schweinelende,Fleisch,USDA / FoodData Central,172,21.0,9.0,0.0,0.0,1.0,,USDA FoodData Central
+PW-FOOD-SCHWEINEKOTELETT,Schweinekotelett,Fleisch,USDA / FoodData Central,231,21.0,16.0,0.0,0.0,1.0,,USDA FoodData Central
+PW-FOOD-SCHWEINEHACK,Schweinehack,Fleisch,USDA / FoodData Central,263,16.9,21.0,0.0,0.0,0.9,,USDA FoodData Central
+PW-FOOD-SCHWEINEBAUCH,Schweinebauch,Fleisch,USDA / FoodData Central,518,9.3,53.0,0.0,0.0,0.7,,USDA FoodData Central
+PW-FOOD-SCHINKENROH,Schinken roh,Fleisch,USDA / FoodData Central,195,29.0,8.0,0.0,0.0,3.5,,USDA FoodData Central
+PW-FOOD-LAMMKEULE,Lammkeule,Fleisch,USDA / FoodData Central,206,20.5,13.6,0.0,0.0,1.0,,USDA FoodData Central
+PW-FOOD-LAMMKOTELETT,Lammkotelett,Fleisch,USDA / FoodData Central,282,24.0,20.0,0.0,0.0,1.0,,USDA FoodData Central
+PW-FOOD-LAMMHACK,Lammhack,Fleisch,USDA / FoodData Central,240,17.0,19.0,0.0,0.0,1.0,,USDA FoodData Central
+PW-FOOD-WILDSCHWEIN,Wildschwein,Fleisch,USDA / FoodData Central,122,22.3,3.2,0.0,0.0,1.1,,USDA FoodData Central
+PW-FOOD-REH,Reh,Fleisch,USDA / FoodData Central,120,22.0,3.0,0.0,0.0,1.1,,USDA FoodData Central
+PW-FOOD-HIRSCH,Hirsch,Fleisch,USDA / FoodData Central,127,22.9,3.3,0.0,0.0,1.1,,USDA FoodData Central
+PW-FOOD-KANINCHEN,Kaninchen,Fleisch,USDA / FoodData Central,173,20.1,10.2,0.0,0.0,1.1,,USDA FoodData Central
+PW-FOOD-ENTEKEULE,Ente Keule,Fleisch,USDA / FoodData Central,211,18.3,15.0,0.0,0.0,1.0,,USDA FoodData Central
+PW-FOOD-WACHTEL,Wachtel,Fleisch,USDA / FoodData Central,134,21.8,4.5,0.0,0.0,1.1,,USDA FoodData Central
+PW-FOOD-RINDERZUNGE,Rinderzunge,Fleisch,USDA / FoodData Central,224,16.0,17.0,0.0,0.0,0.9,,USDA FoodData Central
+PW-FOOD-RINDERHERZ,Rinderherz,Fleisch,USDA / FoodData Central,112,17.7,3.9,0.0,0.0,1.1,,USDA FoodData Central
