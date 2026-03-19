@@ -322,105 +322,25 @@ class _ActivityPreview extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(activity['name'] as String? ?? 'Aktivität', style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              activity['name'] as String? ?? 'Aktivität',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const SizedBox(height: 8),
-            Text('Referenzwert: ${referenceKcalPerMinute.toStringAsFixed(2)} kcal/min für 10 kg'),
+            Text(
+              'Referenzwert: ${referenceKcalPerMinute.toStringAsFixed(2)} kcal/min für 10 kg',
+            ),
             Text('Hund: ${dogWeightKg.toStringAsFixed(1)} kg'),
             Text('Multiplikator: ${multiplier.toStringAsFixed(2)}'),
-            Text('Umgerechnet: ${adjustedKcalPerMinute.toStringAsFixed(2)} kcal/min'),
-            Text('Verbrauch: ${total.toStringAsFixed(1)} kcal für $durationMinutes min'),
+            Text(
+              'Umgerechnet: ${adjustedKcalPerMinute.toStringAsFixed(2)} kcal/min',
+            ),
+            Text(
+              'Verbrauch: ${total.toStringAsFixed(1)} kcal für $durationMinutes min',
+            ),
           ],
-          if (_notFound)
-            const Padding(
-              padding: EdgeInsets.only(top: 8),
-              child: Text('Keine Aktivität gefunden. Die Stammdaten werden in Directus durch die Administration gepflegt.'),
-            ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _duration,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'Dauer in Minuten'),
-          ),
-          const SizedBox(height: 16),
-          if (_selectedActivity != null)
-            _ActivityPreview(activity: _selectedActivity!, durationMinutes: duration),
-          if (_error != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 12),
-              child: Text(_error!, style: const TextStyle(color: Colors.red)),
-            ),
-          const SizedBox(height: 16),
-          FilledButton(
-            onPressed: _isSaving ? null : _save,
-            child: Text(_isSaving ? 'Speichern…' : 'Speichern'),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Die Berechnung erfolgt automatisch anhand des zuletzt erfassten Gewichts des Hundes mit der Formel kcal/min × (Gewicht/10)^0,7.',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ],
+        ),
       ),
-    );
-  }
-}
-
-class _ActivityPreview extends ConsumerWidget {
-  const _ActivityPreview({required this.activity, required this.durationMinutes});
-
-  final Map<String, dynamic> activity;
-  final int durationMinutes;
-
-  double _asDouble(dynamic value) {
-    if (value is num) return value.toDouble();
-    return double.tryParse(value?.toString() ?? '') ?? 0;
-  }
-
-  double _weightForDog(Map<String, dynamic> dog) {
-    final weights = (dog['weights'] as List<dynamic>? ?? const []);
-    if (weights.isNotEmpty) {
-      final latest = weights.first as Map<String, dynamic>;
-      return _asDouble(latest['weightKg']);
-    }
-    return _asDouble(dog['targetWeightKg']) > 0 ? _asDouble(dog['targetWeightKg']) : 10;
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return FutureBuilder<Response<dynamic>>(
-      future: () {
-        final dogId = ref.read(selectedDogIdProvider);
-        if (dogId == null) throw Exception('Kein Hund ausgewählt');
-        return ref.read(apiClientProvider).dio.get('/dogs/$dogId');
-      }(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Card(child: Padding(padding: EdgeInsets.all(16), child: LinearProgressIndicator()));
-        }
-        final dog = (snapshot.data!.data as Map).cast<String, dynamic>();
-        final weightKg = _weightForDog(dog);
-        final ratio = weightKg > 0 ? (weightKg / 10) : 1.0;
-        final multiplier = math.pow(ratio, 0.7).toDouble();
-        final kcalPerMinute = _asDouble(activity['kcalPerMinute']);
-        final total = kcalPerMinute * durationMinutes * multiplier;
-
-        return Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(activity['name'] as String? ?? 'Aktivität', style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 8),
-                Text('Referenzwert: ${kcalPerMinute.toStringAsFixed(2)} kcal/min für 10 kg'),
-                Text('Hund: ${weightKg.toStringAsFixed(1)} kg'),
-                Text('Multiplikator: ${multiplier.toStringAsFixed(2)}'),
-                Text('Verbrauch: ${total.toStringAsFixed(1)} kcal für $durationMinutes min'),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }
