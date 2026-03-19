@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ActivitiesModule } from './activities/activities.module';
 import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
 import { DogsModule } from './dogs/dogs.module';
@@ -10,6 +11,6 @@ import { RecipesModule } from './recipes/recipes.module';
 import { WeightsModule } from './weights/weights.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule, AuthModule, DogsModule, WeightsModule, FoodsModule, MealsModule, RecipesModule, AdminModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), PrismaModule, AuthModule, DogsModule, WeightsModule, FoodsModule, MealsModule, RecipesModule, ActivitiesModule, AdminModule],
 })
 export class AppModule {}

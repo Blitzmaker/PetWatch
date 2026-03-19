@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../features/auth/login_screen.dart';
 import '../features/auth/register_screen.dart';
 import '../features/activities/add_activity_screen.dart';
+import '../features/activities/activity_list_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
 import '../features/dogs/dog_list_screen.dart';
 import '../features/community/news_screen.dart';
@@ -55,6 +56,7 @@ class DogWatchApp extends StatelessWidget {
         '/recipes': (_) => const RecipesListScreen(),
         '/recipes/create': (_) => const RecipeCreateScreen(),
         '/recipes/detail': (_) => const RecipeDetailScreen(),
+        '/activities': (_) => const ActivityListScreen(),
         '/activities/create': (_) => const AddActivityScreen(),
       },
     );

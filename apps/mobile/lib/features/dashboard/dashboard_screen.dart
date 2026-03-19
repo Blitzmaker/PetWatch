@@ -18,6 +18,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   Map<String, dynamic>? _dog;
   List<dynamic> _weights = [];
   List<dynamic> _meals = [];
+  List<dynamic> _activities = [];
 
   @override
   void initState() {
@@ -41,6 +42,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           _dog = null;
           _weights = [];
           _meals = [];
+          _activities = [];
           _loading = false;
         });
         return;
@@ -53,12 +55,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       final responses = await Future.wait([
         api.get('/dogs/$selectedDogId/weights'),
         api.get('/dogs/$selectedDogId/meals'),
+        api.get('/dogs/$selectedDogId/activities'),
       ]);
 
       setState(() {
         _dog = currentDog;
         _weights = responses[0].data as List<dynamic>;
         _meals = responses[1].data as List<dynamic>;
+        _activities = responses[2].data as List<dynamic>;
         _loading = false;
       });
     } on DioException catch (e) {
@@ -120,6 +124,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       return eatenAt.year == now.year && eatenAt.month == now.month && eatenAt.day == now.day;
     }).toList();
     final mealsToday = mealsTodayEntries.length;
+    final activitiesTodayEntries = _activities.where((activity) {
+      final performedAt = DateTime.tryParse((activity as Map<String, dynamic>)['performedAt'] as String? ?? '');
+      if (performedAt == null) return false;
+      final now = DateTime.now();
+      return performedAt.year == now.year && performedAt.month == now.month && performedAt.day == now.day;
+    }).toList();
+    final activityKcalToday = activitiesTodayEntries.fold<double>(0, (sum, activity) => sum + (((activity as Map<String, dynamic>)['kcalBurned'] as num?)?.toDouble() ?? 0));
 
     final dailyKcalTarget = ((_dog?['dailyKcalTarget'] as num?)?.toDouble() ?? 700).clamp(1, 100000).toDouble();
 
@@ -135,8 +146,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       return sum + mealKcal;
     });
 
-    final remainingKcal = (dailyKcalTarget - consumedKcal).clamp(0.0, dailyKcalTarget).toDouble();
-    final progress = (consumedKcal / dailyKcalTarget).clamp(0, 1).toDouble();
+    final adjustedTarget = (dailyKcalTarget + activityKcalToday).clamp(1, 100000).toDouble();
+    final remainingKcal = (adjustedTarget - consumedKcal).clamp(0.0, adjustedTarget).toDouble();
+    final progress = (consumedKcal / adjustedTarget).clamp(0, 1).toDouble();
 
     final lastWeighingText = _weights.isEmpty
         ? 'Noch nie'
@@ -153,7 +165,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             children: [
               _HeaderCard(dogName: _dog?['name'] as String? ?? 'Hund', latestWeight: latestWeight?.toDouble(), targetWeight: targetWeight?.toDouble()),
               const SizedBox(height: 20),
-              Center(child: _CalorieRing(remainingKcal: remainingKcal, targetKcal: dailyKcalTarget, progress: progress)),
+              Center(child: _CalorieRing(remainingKcal: remainingKcal, targetKcal: adjustedTarget, progress: progress)),
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -168,7 +180,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    Expanded(child: _StatCard(title: 'Aktivität\nheute', value: 'Niedrig', icon: Icons.pets)),
+                    Expanded(child: _StatCard(title: 'Aktivität\nheute', value: '${activityKcalToday.round()} kcal', icon: Icons.directions_run, onTap: () => Navigator.pushNamed(context, '/activities'))),
                     const SizedBox(width: 10),
                     Expanded(
                       child: _StatCard(
