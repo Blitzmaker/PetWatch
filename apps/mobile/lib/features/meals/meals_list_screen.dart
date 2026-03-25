@@ -22,6 +22,7 @@ class _MealsListScreenState extends ConsumerState<MealsListScreen> {
   bool _isLoading = true;
   String? _deletingId;
   int? _selectedSectionIndex;
+  DateTime _selectedDay = _startOfDay(DateTime.now());
 
   @override
   void initState() {
@@ -51,6 +52,7 @@ class _MealsListScreenState extends ConsumerState<MealsListScreen> {
         _error = null;
         _isLoading = false;
         _selectedSectionIndex = null;
+        _selectedDay = _resolveInitialDay((response.data as List<dynamic>).cast<Map<String, dynamic>>(), 'eatenAt');
       });
     } on DioException catch (e) {
       setState(() {
@@ -107,6 +109,72 @@ class _MealsListScreenState extends ConsumerState<MealsListScreen> {
   DateTime? _parseDateTime(dynamic rawValue) {
     if (rawValue is! String || rawValue.isEmpty) return null;
     return DateTime.tryParse(rawValue)?.toLocal();
+  }
+
+  static DateTime _startOfDay(DateTime date) => DateTime(date.year, date.month, date.day);
+
+  DateTime _resolveInitialDay(List<Map<String, dynamic>> entries, String dateKey) {
+    DateTime? latestDay;
+    for (final entry in entries) {
+      final date = _parseDateTime(entry[dateKey]);
+      if (date == null) continue;
+      final day = _startOfDay(date);
+      if (latestDay == null || day.isAfter(latestDay)) {
+        latestDay = day;
+      }
+    }
+    return latestDay ?? _startOfDay(DateTime.now());
+  }
+
+  List<Map<String, dynamic>> _entriesForSelectedDay(List<Map<String, dynamic>> entries, String dateKey) {
+    return entries.where((entry) {
+      final date = _parseDateTime(entry[dateKey]);
+      return date != null && _startOfDay(date) == _selectedDay;
+    }).toList();
+  }
+
+  void _changeDay(int offset) {
+    setState(() => _selectedDay = _selectedDay.add(Duration(days: offset)));
+  }
+
+  Widget _buildDayNavigator(List<Map<String, dynamic>> dayEntries) {
+    final canGoForward = _selectedDay.isBefore(_startOfDay(DateTime.now()));
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0x1F2CB89D)),
+      ),
+      child: Row(
+        children: [
+          IconButton.filledTonal(
+            onPressed: () => _changeDay(-1),
+            icon: const Icon(Icons.chevron_left),
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                Text(
+                  DateFormat('EEEE, dd.MM.yyyy', 'de_DE').format(_selectedDay),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF11332C)),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${dayEntries.length} Einträge',
+                  style: TextStyle(color: Colors.blueGrey.shade700, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+          IconButton.filledTonal(
+            onPressed: canGoForward ? () => _changeDay(1) : null,
+            icon: const Icon(Icons.chevron_right),
+          ),
+        ],
+      ),
+    );
   }
 
   String _formatDateTime(dynamic rawValue) {
@@ -409,7 +477,7 @@ class _MealsListScreenState extends ConsumerState<MealsListScreen> {
     );
   }
 
-  Widget _buildMealsList(List<Map<String, dynamic>> entries) {
+  Widget _buildMealsList(List<Map<String, dynamic>> selectedDayEntries) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -428,7 +496,17 @@ class _MealsListScreenState extends ConsumerState<MealsListScreen> {
           style: TextStyle(color: Colors.blueGrey.shade700),
         ),
         const SizedBox(height: 12),
-        ...entries.map((meal) {
+        _buildDayNavigator(selectedDayEntries),
+        const SizedBox(height: 12),
+        if (selectedDayEntries.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Text(
+              'Keine Mahlzeiten für diesen Tag erfasst.',
+              style: TextStyle(color: Colors.blueGrey.shade700),
+            ),
+          ),
+        ...selectedDayEntries.map((meal) {
           final id = meal['id'] as String?;
           final isDeleting = id != null && _deletingId == id;
           final mealEntries = (meal['entries'] as List<dynamic>? ?? []).cast<Map<String, dynamic>>();
@@ -520,6 +598,7 @@ class _MealsListScreenState extends ConsumerState<MealsListScreen> {
   @override
   Widget build(BuildContext context) {
     final entries = _meals.cast<Map<String, dynamic>>();
+    final selectedDayEntries = _entriesForSelectedDay(entries, 'eatenAt');
     final content = _isLoading
         ? const Center(child: CircularProgressIndicator())
         : _error != null
@@ -555,7 +634,7 @@ class _MealsListScreenState extends ConsumerState<MealsListScreen> {
                       children: [
                         _buildOverviewCard(entries),
                         const SizedBox(height: 24),
-                        _buildMealsList(entries),
+                        _buildMealsList(selectedDayEntries),
                       ],
                     ),
                   );

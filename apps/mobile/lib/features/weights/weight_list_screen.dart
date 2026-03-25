@@ -24,6 +24,7 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
   bool _isLoading = true;
   String? _deletingId;
   int? _selectedChartIndex;
+  DateTime _selectedDay = _startOfDay(DateTime.now());
 
   @override
   void initState() {
@@ -53,6 +54,7 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
         _error = null;
         _isLoading = false;
         _selectedChartIndex = null;
+        _selectedDay = _resolveInitialDay((response.data as List<dynamic>).cast<Map<String, dynamic>>(), 'date');
       });
     } on DioException catch (e) {
       setState(() {
@@ -109,6 +111,72 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
   DateTime? _parseDate(dynamic rawValue) {
     if (rawValue is! String || rawValue.isEmpty) return null;
     return DateTime.tryParse(rawValue)?.toLocal();
+  }
+
+  static DateTime _startOfDay(DateTime date) => DateTime(date.year, date.month, date.day);
+
+  DateTime _resolveInitialDay(List<Map<String, dynamic>> entries, String dateKey) {
+    DateTime? latestDay;
+    for (final entry in entries) {
+      final date = _parseDate(entry[dateKey]);
+      if (date == null) continue;
+      final day = _startOfDay(date);
+      if (latestDay == null || day.isAfter(latestDay)) {
+        latestDay = day;
+      }
+    }
+    return latestDay ?? _startOfDay(DateTime.now());
+  }
+
+  List<Map<String, dynamic>> _entriesForSelectedDay(List<Map<String, dynamic>> entries, String dateKey) {
+    return entries.where((entry) {
+      final date = _parseDate(entry[dateKey]);
+      return date != null && _startOfDay(date) == _selectedDay;
+    }).toList();
+  }
+
+  void _changeDay(int offset) {
+    setState(() => _selectedDay = _selectedDay.add(Duration(days: offset)));
+  }
+
+  Widget _buildDayNavigator(List<Map<String, dynamic>> dayEntries) {
+    final canGoForward = _selectedDay.isBefore(_startOfDay(DateTime.now()));
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0x1F2CB89D)),
+      ),
+      child: Row(
+        children: [
+          IconButton.filledTonal(
+            onPressed: () => _changeDay(-1),
+            icon: const Icon(Icons.chevron_left),
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                Text(
+                  DateFormat('EEEE, dd.MM.yyyy', 'de_DE').format(_selectedDay),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF11332C)),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${dayEntries.length} Einträge',
+                  style: TextStyle(color: Colors.blueGrey.shade700, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+          IconButton.filledTonal(
+            onPressed: canGoForward ? () => _changeDay(1) : null,
+            icon: const Icon(Icons.chevron_right),
+          ),
+        ],
+      ),
+    );
   }
 
   String _formatDate(dynamic rawValue) {
@@ -375,7 +443,7 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
     );
   }
 
-  Widget _buildWeightList(List<Map<String, dynamic>> entries) {
+  Widget _buildWeightList(List<Map<String, dynamic>> selectedDayEntries) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -394,7 +462,17 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
           style: TextStyle(color: Colors.blueGrey.shade700),
         ),
         const SizedBox(height: 12),
-        ...entries.map((entry) {
+        _buildDayNavigator(selectedDayEntries),
+        const SizedBox(height: 12),
+        if (selectedDayEntries.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Text(
+              'Keine Wiegungen für diesen Tag erfasst.',
+              style: TextStyle(color: Colors.blueGrey.shade700),
+            ),
+          ),
+        ...selectedDayEntries.map((entry) {
           final id = entry['id'] as String?;
           final isDeleting = id != null && _deletingId == id;
           return Padding(
@@ -456,6 +534,7 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
   @override
   Widget build(BuildContext context) {
     final entries = _weights.cast<Map<String, dynamic>>();
+    final selectedDayEntries = _entriesForSelectedDay(entries, 'date');
     final content = _isLoading
         ? const Center(child: CircularProgressIndicator())
         : _error != null
@@ -491,7 +570,7 @@ class _WeightListScreenState extends ConsumerState<WeightListScreen> {
                       children: [
                         _buildChartCard(entries),
                         const SizedBox(height: 24),
-                        _buildWeightList(entries),
+                        _buildWeightList(selectedDayEntries),
                       ],
                     ),
                   );
