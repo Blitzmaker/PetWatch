@@ -168,6 +168,7 @@ class _NewsScreenState extends ConsumerState<NewsScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (_) => NewsDetailScreen(
+                                postId: post['id'].toString(),
                                 title: ((post['title'] as String?)?.trim().isNotEmpty == true) ? post['title'] as String : 'Ohne Titel',
                                 content: (post['content'] as String?) ?? '',
                                 excerpt: (post['excerpt'] as String?) ?? '',

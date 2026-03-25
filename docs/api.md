@@ -46,6 +46,10 @@ Authenticated endpoints require `Authorization: Bearer <accessToken>`.
 - PATCH `/recipes/:id`
 - DELETE `/recipes/:id`
 
+## News Reactions
+- GET `/news/reactions?postIds=:id1,:id2`
+- PUT `/news/:postId/reaction`
+
 ## Admin
 - GET `/admin/users`
 - PATCH `/admin/users/:id`
