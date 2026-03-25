@@ -118,13 +118,38 @@ cd apps/mobile
 flutter pub get
 ```
 
-### 2.2 Auf echtes Android-Gerät installieren
+### 2.2 Auf echtes Android-Gerät installieren (inkl. News + Community)
+
+Damit du **nicht nur Login/API**, sondern auch die Tabs **News (Directus)** und
+**Community (Flarum WebView + SSO)** siehst, gib alle relevanten `--dart-define`
+Werte mit:
 
 ```bash
-flutter run --dart-define=API_BASE_URL=http://192.168.178.105:3000
+flutter run \
+  --dart-define=API_BASE_URL=http://192.168.178.105:3000 \
+  --dart-define=DIRECTUS_BASE_URL=http://192.168.178.105:8055 \
+  --dart-define=FLARUM_BASE_URL=https://community.deinedomain.tld \
+  --dart-define=FLARUM_SSO_PATH=/sso/mobile
 ```
 
-Damit verbindet sich die App direkt mit deiner API auf dem Homeserver.
+Optional (falls deine Directus-Collections nicht öffentlich lesbar sind):
+
+```bash
+flutter run \
+  --dart-define=API_BASE_URL=http://192.168.178.105:3000 \
+  --dart-define=DIRECTUS_BASE_URL=http://192.168.178.105:8055 \
+  --dart-define=DIRECTUS_STATIC_TOKEN=<DEIN_DIRECTUS_STATIC_TOKEN> \
+  --dart-define=FLARUM_BASE_URL=https://community.deinedomain.tld \
+  --dart-define=FLARUM_SSO_PATH=/sso/mobile
+```
+
+Hinweise:
+
+- Auf einem **physischen Handy** darfst du für Backend/Directus **nicht**
+  `10.0.2.2` verwenden (das funktioniert nur im Android-Emulator).
+- `FLARUM_BASE_URL` sollte auf Android eine **https://** URL sein, da WebView
+  `http://` standardmäßig blockiert.
+- Wenn deine Flarum-SSO-Route anders heißt, passe `FLARUM_SSO_PATH` an.
 
 ---
 
