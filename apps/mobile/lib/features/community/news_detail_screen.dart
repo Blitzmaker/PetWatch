@@ -196,14 +196,45 @@ class _NewsDetailScreenState extends ConsumerState<NewsDetailScreen> {
   }
 
   String _normalizeHtml(String value) {
-    return value
+    var normalized = value
         .replaceAllMapped(RegExp(r'''(src|href)=(['"])(/[^'"]*)\2''', caseSensitive: false), (match) {
           final attribute = match.group(1)!;
           final quote = match.group(2)!;
           final path = match.group(3)!;
           return '$attribute=$quote${_directusBaseUrl}$path$quote';
         })
-        .trim();
+        .replaceAllMapped(
+          RegExp(r'''(src|href)=(['"])(?!https?:\/\/|\/\/|data:|mailto:|tel:)([^/'"][^'"]*)\2''', caseSensitive: false),
+          (match) {
+            final attribute = match.group(1)!;
+            final quote = match.group(2)!;
+            final path = match.group(3)!;
+            return '$attribute=$quote${_directusBaseUrl}/$path$quote';
+          },
+        )
+        .replaceAllMapped(RegExp(r'''(src|href)=(['"])(\/\/[^'"]*)\2''', caseSensitive: false), (match) {
+          final attribute = match.group(1)!;
+          final quote = match.group(2)!;
+          final path = match.group(3)!;
+          return '$attribute=$quotehttps:$path$quote';
+        });
+
+    normalized = normalized.replaceAllMapped(
+      RegExp(r'<img([^>]*?)\sdata-src=(["\'])([^"\']+)\2([^>]*)>', caseSensitive: false),
+      (match) {
+        final before = match.group(1) ?? '';
+        final quote = match.group(2)!;
+        final dataSrc = match.group(3)!;
+        final after = match.group(4) ?? '';
+        final hasSrc = RegExp(r'\ssrc=(["\']).*?\1', caseSensitive: false).hasMatch('$before$after');
+        if (hasSrc) {
+          return match.group(0)!;
+        }
+        return '<img$before src=$quote$dataSrc$quote$after>';
+      },
+    );
+
+    return normalized.trim();
   }
 }
 
